@@ -47,12 +47,33 @@ var j := [j_0, j_90, j_180, j_270]
 var shapes := [j, t, z, s, l, i]
 var shapes_full := shapes.duplicate()
 
+# Lados possíveis para o surgimento das peças
+enum Side { TOP, RIGHT, BOTTOM, LEFT }
+
+# Adicione uma variável para armazenar o lado sorteado
+var spawn_side: int
+
+# Modifique a posição inicial e direção com base no lado sorteado
+var start_positions := {
+	Side.TOP: Vector2i(COLS / 2, 0),
+	Side.RIGHT: Vector2i(COLS - 1, ROWS / 2),
+	Side.BOTTOM: Vector2i(COLS / 2, ROWS - 1),
+	Side.LEFT: Vector2i(0, ROWS / 2)
+}
+
+var movement_directions := {
+	Side.TOP: Vector2i(0, 1),     # De cima para baixo
+	Side.RIGHT: Vector2i(-1, 0),  # Da direita para a esquerda
+	Side.BOTTOM: Vector2i(0, -1), # De baixo para cima
+	Side.LEFT: Vector2i(1, 0)     # Da esquerda para a direita
+}
+
 #grid variables
-const COLS : int = 10
-const ROWS : int = 20
+const COLS : int = 34
+const ROWS : int = 30
 
 #movement variables
-const directions := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]
+const mov_directions := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.UP]
 var steps : Array
 const steps_req : int = 50
 const start_pos := Vector2i(5, 1)
@@ -93,37 +114,80 @@ func new_game():
 	score = 0
 	speed = 1.0
 	game_running = true
-	steps = [0, 0, 0] #0:left, 1:right, 2:down
+	steps = [0, 0, 0, 0] #0:left, 1:right, 2:down
 	$HUD.get_node("GameOverLabel").hide()
 	#clear everything
 	clear_piece()
 	clear_board()
 	clear_panel()
+	create_fixed_center_piece()
 	piece_type = pick_piece()
 	piece_atlas = Vector2i(shapes_full.find(piece_type), 0)
 	next_piece_type = pick_piece()
 	next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
+	spawn_side = randi() % 4
 	create_piece()
+
+# Adiciona uma peça fixa no centro do tabuleiro no início do jogo
+func create_fixed_center_piece():
+	var center_pos = Vector2i(COLS / 2, ROWS / 2)
+	var center_piece = o[0] # Usando o formato "O" como exemplo
+	for i in center_piece:
+		#next_piece_type = pick_piece()
+		set_cell(board_layer, center_pos + i, tile_id, Vector2i(0,0))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if game_running:
-		if Input.is_action_pressed("ui_left"):
-			steps[0] += 10
-		elif Input.is_action_pressed("ui_right"):
-			steps[1] += 10
-		elif Input.is_action_pressed("ui_down"):
-			steps[2] += 10
-		elif Input.is_action_just_pressed("ui_up"):
-			rotate_piece()
+		# Determinar a direção automática atual
+		var auto_move_direction = movement_directions[spawn_side]
 		
-		#apply downward movement every frame
-		steps[2] += speed
-		#move the piece
+		# Movimentos manuais permitidos com base na direção automática
+		if auto_move_direction == Vector2i(0, 1):  # Vindo de cima para baixo
+			if Input.is_action_pressed("ui_left"):
+				steps[0] += 10
+			elif Input.is_action_pressed("ui_right"):
+				steps[1] += 10
+			elif Input.is_action_pressed("ui_down"):
+				steps[2] += 10
+		elif auto_move_direction == Vector2i(0, -1):  # Vindo de baixo para cima
+			if Input.is_action_pressed("ui_left"):
+				steps[0] += 10
+			elif Input.is_action_pressed("ui_right"):
+				steps[1] += 10
+			elif Input.is_action_pressed("ui_up"):
+				steps[3] += 10
+		elif auto_move_direction == Vector2i(1, 0):  # Vindo da esquerda para a direita
+			if Input.is_action_pressed("ui_right"):
+				steps[1] += 10
+			elif Input.is_action_pressed("ui_down"):
+				steps[2] += 10
+			elif Input.is_action_pressed("ui_up"):
+				steps[3] += 10
+		elif auto_move_direction == Vector2i(-1, 0):  # Vindo da direita para a esquerda
+			if Input.is_action_pressed("ui_left"):
+				steps[0] += 10
+			elif Input.is_action_pressed("ui_down"):
+				steps[2] += 10
+			elif Input.is_action_pressed("ui_up"):
+				steps[3] += 10
+		
+		# Rotação sempre permitida
+		if Input.is_action_just_pressed("rotate_piece"):
+			rotate_piece()        
+		
+		# Aplicar movimentos manuais
 		for i in range(steps.size()):
 			if steps[i] > steps_req:
-				move_piece(directions[i])
+				move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
 				steps[i] = 0
+
+		# Movimento automático na direção oposta ao lado de surgimento
+		steps[2] += speed  # Incrementamos o contador para o movimento automático
+		if steps[2] > steps_req:
+			move_piece(auto_move_direction)  # Movimento automático
+			steps[2] = 0
+		
 
 func pick_piece():
 	var piece
@@ -138,12 +202,12 @@ func pick_piece():
 
 func create_piece():
 	#reset variables
-	steps = [0, 0, 0] #0:left, 1:right, 2:down
-	cur_pos = start_pos
+	steps = [0, 0, 0, 0] #0:left, 1:right, 2:down
+	cur_pos = start_positions[spawn_side]
 	active_piece = piece_type[rotation_index]
 	draw_piece(active_piece, cur_pos, piece_atlas)
 	#show next piece
-	draw_piece(next_piece_type[0], Vector2i(15, 6), next_piece_atlas)
+	draw_piece(next_piece_type[0], Vector2i(36, 5), next_piece_atlas)
 
 func clear_piece():
 	for i in active_piece:
@@ -337,7 +401,8 @@ func move_piece(dir):
 		cur_pos += dir
 		draw_piece(active_piece, cur_pos, piece_atlas)
 	else:
-		if dir == Vector2i.DOWN:
+		#if dir == Vector2i.DOWN:
+		if dir == movement_directions[spawn_side]:
 			land_piece()
 			#check_rows()
 			piece_type = next_piece_type
@@ -345,6 +410,7 @@ func move_piece(dir):
 			next_piece_type = pick_piece()
 			next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
 			clear_panel()
+			spawn_side = randi() % 4
 			create_piece()
 			check_game_over()
 
@@ -475,7 +541,6 @@ func land_piece():
 			else: 
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == s_90:
 			if i == Vector2i(1,0) or i == Vector2i(2,2):
 				piece_atlas = Vector2i(3,0)
@@ -484,7 +549,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == s_180:
 			if i == Vector2i(2,1) or i == Vector2i(0,2):
 				piece_atlas = Vector2i(3,0)
@@ -493,7 +557,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == s_270:
 			if i == Vector2i(0,0) or i == Vector2i(1,2):
 				piece_atlas = Vector2i(3,0)
@@ -502,7 +565,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_0:
 			if i == Vector2i(2,0) or i == Vector2i(0,1): 
 				piece_atlas = Vector2i(3,0)
@@ -511,7 +573,6 @@ func land_piece():
 			else: 
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_90:
 			if i == Vector2i(1,0) or i == Vector2i(2,2):
 				piece_atlas = Vector2i(3,0)
@@ -520,7 +581,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_180:
 			if i == Vector2i(2,1) or i == Vector2i(0,2):
 				piece_atlas = Vector2i(3,0)
@@ -529,7 +589,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_270:
 			if i == Vector2i(0,0) or i == Vector2i(1,2):
 				piece_atlas = Vector2i(3,0)
@@ -538,7 +597,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_0:
 			if i == Vector2i(0,1) or i == Vector2i(3,1): 
 				piece_atlas = Vector2i(3,0)
@@ -547,7 +605,6 @@ func land_piece():
 			else: 
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_90:
 			if i == Vector2i(2,0) or i == Vector2i(2,3):
 				piece_atlas = Vector2i(3,0)
@@ -556,7 +613,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_180:
 			if i == Vector2i(0,2) or i == Vector2i(3,2):
 				piece_atlas = Vector2i(3,0)
@@ -565,7 +621,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_270:
 			if i == Vector2i(1,0) or i == Vector2i(1,3):
 				piece_atlas = Vector2i(3,0)
@@ -574,7 +629,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 	# Atualiza os tiles adjacentes após a peça pousar
 	update_adjacent_tiles()
 	
@@ -603,8 +657,8 @@ func update_adjacent_tiles():
 		set_cell(active_layer, pos, tile_id, new_atlas)
 
 func clear_panel():
-	for i in range(14, 19):
-		for j in range(5, 9):
+	for i in range(34, 40):
+		for j in range(4, 8):
 			erase_cell(active_layer, Vector2i(i, j))
 
 func check_rows():
