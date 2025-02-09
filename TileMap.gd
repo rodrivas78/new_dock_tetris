@@ -207,7 +207,7 @@ func create_piece():
 	active_piece = piece_type[rotation_index]
 	draw_piece(active_piece, cur_pos, piece_atlas)
 	#show next piece
-	draw_piece(next_piece_type[0], Vector2i(36, 5), next_piece_atlas)
+	draw_piece(next_piece_type[0], Vector2i(38, 6), next_piece_atlas)
 
 func clear_piece():
 	for i in active_piece:
@@ -657,7 +657,7 @@ func update_adjacent_tiles():
 		set_cell(active_layer, pos, tile_id, new_atlas)
 
 func clear_panel():
-	for i in range(34, 40):
+	for i in range(36, 42):
 		for j in range(4, 8):
 			erase_cell(active_layer, Vector2i(i, j))
 
