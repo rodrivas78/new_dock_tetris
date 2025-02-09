@@ -541,7 +541,6 @@ func land_piece():
 			else: 
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == s_90:
 			if i == Vector2i(1,0) or i == Vector2i(2,2):
 				piece_atlas = Vector2i(3,0)
@@ -550,7 +549,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == s_180:
 			if i == Vector2i(2,1) or i == Vector2i(0,2):
 				piece_atlas = Vector2i(3,0)
@@ -559,7 +557,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == s_270:
 			if i == Vector2i(0,0) or i == Vector2i(1,2):
 				piece_atlas = Vector2i(3,0)
@@ -568,7 +565,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_0:
 			if i == Vector2i(2,0) or i == Vector2i(0,1): 
 				piece_atlas = Vector2i(3,0)
@@ -577,7 +573,6 @@ func land_piece():
 			else: 
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_90:
 			if i == Vector2i(1,0) or i == Vector2i(2,2):
 				piece_atlas = Vector2i(3,0)
@@ -586,7 +581,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_180:
 			if i == Vector2i(2,1) or i == Vector2i(0,2):
 				piece_atlas = Vector2i(3,0)
@@ -595,7 +589,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == l_270:
 			if i == Vector2i(0,0) or i == Vector2i(1,2):
 				piece_atlas = Vector2i(3,0)
@@ -604,7 +597,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_0:
 			if i == Vector2i(0,1) or i == Vector2i(3,1): 
 				piece_atlas = Vector2i(3,0)
@@ -613,7 +605,6 @@ func land_piece():
 			else: 
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_90:
 			if i == Vector2i(2,0) or i == Vector2i(2,3):
 				piece_atlas = Vector2i(3,0)
@@ -622,7 +613,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_180:
 			if i == Vector2i(0,2) or i == Vector2i(3,2):
 				piece_atlas = Vector2i(3,0)
@@ -631,7 +621,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 		elif active_piece == i_270:
 			if i == Vector2i(1,0) or i == Vector2i(1,3):
 				piece_atlas = Vector2i(3,0)
@@ -640,7 +629,6 @@ func land_piece():
 			else:
 				piece_atlas = Vector2i(0,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
-				special_positions.append(cur_pos + i)
 	# Atualiza os tiles adjacentes após a peça pousar
 	update_adjacent_tiles()
 	
