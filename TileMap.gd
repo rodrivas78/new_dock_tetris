@@ -73,7 +73,7 @@ const COLS : int = 34
 const ROWS : int = 30
 
 #movement variables
-const directions := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.UP]
+const mov_directions := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.UP]
 var steps : Array
 const steps_req : int = 50
 const start_pos := Vector2i(5, 1)
@@ -179,7 +179,7 @@ func _process(delta):
 		# Aplicar movimentos manuais
 		for i in range(steps.size()):
 			if steps[i] > steps_req:
-				move_piece(directions[i])  # Aplica apenas os movimentos válidos
+				move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
 				steps[i] = 0
 
 		# Movimento automático na direção oposta ao lado de surgimento
