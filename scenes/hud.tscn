@@ -37,12 +37,53 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ScoreLabel" type="Label" parent="."]
-offset_left = 1190.0
+visible = false
+offset_left = 1159.0
 offset_top = 364.0
-offset_right = 1370.0
+offset_right = 1399.0
 offset_bottom = 409.0
 theme_override_font_sizes/font_size = 30
-text = "SCORE: 0"
+text = "Pieces: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PiecesLabel" type="Label" parent="."]
+offset_left = 1159.0
+offset_top = 364.0
+offset_right = 1399.0
+offset_bottom = 409.0
+theme_override_font_sizes/font_size = 30
+text = "Pieces: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RedTilesLabel" type="Label" parent="."]
+offset_left = 1159.0
+offset_top = 553.0
+offset_right = 1399.0
+offset_bottom = 598.0
+theme_override_font_sizes/font_size = 30
+text = "Red Tiles: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BlueTilesLabel" type="Label" parent="."]
+offset_left = 1159.0
+offset_top = 598.0
+offset_right = 1399.0
+offset_bottom = 643.0
+theme_override_font_sizes/font_size = 30
+text = "Blue Tiles: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StageLabel" type="Label" parent="."]
+offset_left = 1159.0
+offset_top = 674.0
+offset_right = 1399.0
+offset_bottom = 719.0
+theme_override_font_sizes/font_size = 30
+text = "Stage: 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
