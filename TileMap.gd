@@ -692,6 +692,7 @@ func update_adjacent_tiles():
 			red_tiles = 0
 			is_color_adjacent_tiles_enabled = false
 			clear_board()
+		#problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
 		elif piece_count >= 9 and blue_tiles <= 6 and red_tiles >= 3:
 			$HUD.get_node("GameOverLabel").show()
 			game_running = false
