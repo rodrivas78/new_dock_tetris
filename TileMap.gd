@@ -55,10 +55,14 @@ var spawn_side: int
 
 # Modifique a posição inicial e direção com base no lado sorteado
 var start_positions := {
-	Side.TOP: Vector2i(COLS / 2, 0),
-	Side.RIGHT: Vector2i(COLS - 1, ROWS / 2),
-	Side.BOTTOM: Vector2i(COLS / 2, ROWS - 1),
-	Side.LEFT: Vector2i(0, ROWS / 2)
+	#Side.TOP: Vector2i(COLS / 2, 0),
+	#Side.RIGHT: Vector2i(COLS - 1, ROWS / 2),
+	#Side.BOTTOM: Vector2i(COLS / 2, ROWS - 1),
+	#Side.LEFT: Vector2i(0, ROWS / 2)
+	Side.TOP: Vector2i(15, 1),
+	Side.RIGHT: Vector2i(29, 14),
+	Side.BOTTOM: Vector2i(15, 28),
+	Side.LEFT: Vector2i(0, 14)
 }
 
 var movement_directions := {
@@ -113,9 +117,16 @@ var special_positions := []
 func _ready():
 	new_game()
 	$HUD.get_node("StartButton").pressed.connect(new_game)
-
+	
 func new_game():
 	#reset variables
+	$HUD.get_node("StartButton").release_focus()
+	stage = 1
+	red_tiles = 0
+	blue_tiles = 0
+	piece_count = 0
+	special_positions = []
+	is_color_adjacent_tiles_enabled = true
 	score = 0
 	speed = 1.0
 	game_running = true
@@ -136,10 +147,10 @@ func new_game():
 # Adiciona uma peça fixa no centro do tabuleiro no início do jogo
 func create_fixed_center_piece():
 	#var center_pos = Vector2i(COLS / 2, ROWS / 2)
-	var center_pos = Vector2i(15, 13)
+	var center_pos = Vector2i(15, 14)
 	var center_piece = o[0] # Usando o formato "O" como exemplo
 	for i in center_piece:
-		set_cell(board_layer, center_pos + i, tile_id, Vector2i(0,0))
+		set_cell(board_layer, center_pos + i, tile_id, Vector2i(7,0))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -665,7 +676,7 @@ func update_adjacent_tiles():
 		# Conta quantas posições adjacentes estão ocupadas
 		for dir in directions:
 			if not is_free(pos + dir):
-				occupied_count += 1	
+				occupied_count += 1
 		# Define a cor apenas para 2, 3 ou 4 espaços ocupados
 		var new_atlas = piece_atlas  # Mantém a cor original por padrão
 		if occupied_count == 1:  #Vermelho
@@ -687,11 +698,13 @@ func update_adjacent_tiles():
 		if piece_count >= 9 and blue_tiles >= 6 and red_tiles <= 2:
 			stage += 1
 			$HUD.get_node("StageLabel").text = "Stage: " + str(stage)
+			clear_board()
 			piece_count = 0
 			blue_tiles = 0
 			red_tiles = 0
+			special_positions = []
 			is_color_adjacent_tiles_enabled = false
-			clear_board()
+			create_fixed_center_piece()
 		#problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
 		elif piece_count >= 9 and blue_tiles <= 6 and red_tiles >= 3:
 			$HUD.get_node("GameOverLabel").show()
@@ -733,6 +746,7 @@ func clear_board():
 	for i in range(ROWS):
 		for j in range(COLS):
 			erase_cell(board_layer, Vector2i(j + 1, i + 1))
+			erase_cell(active_layer, Vector2i(j + 1, i + 1))
 
 func check_game_over():
 	for i in active_piece:
