@@ -41,9 +41,9 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_xosvn")
 [node name="RedTilesPanel" type="Panel" parent="."]
 modulate = Color(0.168627, 0.85098, 0.231373, 1)
 offset_left = 1119.0
-offset_top = 662.0
+offset_top = 661.0
 offset_right = 1319.0
-offset_bottom = 718.0
+offset_bottom = 717.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_gt3c6")
 script = ExtResource("1_ew37b")
 
