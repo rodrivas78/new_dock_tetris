@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=8 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
 [ext_resource type="PackedScene" uid="uid://psjnbhu2tahx" path="res://scenes/hud.tscn" id="3_vxlsc"]
 [ext_resource type="Texture2D" uid="uid://bli6phsx3enbj" path="res://assets/bg4.jpg" id="4_birf1"]
+[ext_resource type="Texture2D" uid="uid://dh4ojr6jvlmry" path="res://assets/bg3.jpg" id="4_js3uj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a08xs"]
 texture = ExtResource("1_7at63")
@@ -26,6 +27,7 @@ tile_set = SubResource("TileSet_l1uyk")
 rendering_quadrant_size = 32
 format = 2
 layer_0/name = "board"
+layer_0/tile_data = PackedInt32Array(1376292, 196608, 0, 1572900, 393216, 0)
 layer_1/name = "active"
 layer_1/tile_data = PackedInt32Array()
 script = ExtResource("2_y6mwb")
@@ -34,5 +36,11 @@ script = ExtResource("2_y6mwb")
 z_index = -1
 position = Vector2(701, 481)
 texture = ExtResource("4_birf1")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+visible = false
+z_index = -1
+position = Vector2(701, 481)
+texture = ExtResource("4_js3uj")
 
 [node name="HUD" parent="." instance=ExtResource("3_vxlsc")]

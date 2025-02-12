@@ -1,3 +1,5 @@
-res://scenes/tile_map.tscn
 res://scenes/hud.tscn
+res://scenes/tile_map.tscn
 res://TileMap.gd
+res://scenes/RedTilesPanel.gd
+res://scenes/BlueTilesPanel.gd
