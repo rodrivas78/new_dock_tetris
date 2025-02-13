@@ -161,6 +161,7 @@ func create_fixed_center_piece():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if game_running:
+		
 		# Determinar a direção automática atual
 		var auto_move_direction = movement_directions[spawn_side]
 		
@@ -209,7 +210,7 @@ func _process(delta):
 		if steps[2] > steps_req:
 			move_piece(auto_move_direction)  # Movimento automático
 			steps[2] = 0
-		
+			
 
 func pick_piece():
 	var piece
@@ -423,24 +424,23 @@ func move_piece(dir):
 		cur_pos += dir
 		draw_piece(active_piece, cur_pos, piece_atlas)
 		#detects if piece has passed the central block
-		if movement_directions[spawn_side] == Vector2i(0, 1) and cur_pos.y >= 27:
+		if movement_directions[spawn_side] == Vector2i(0, 1) and cur_pos.y >= 25:
 			$HUD.get_node("GameOverLabel").show()
 			game_running = false
 		elif movement_directions[spawn_side] == Vector2i(-1, 0) and cur_pos.x <= 2:
 			$HUD.get_node("GameOverLabel").show()
 			game_running = false
-		elif movement_directions[spawn_side] == Vector2i(0, -1) and cur_pos.y <= 3:
+		elif movement_directions[spawn_side] == Vector2i(0, -1) and cur_pos.y <= 2:
 			$HUD.get_node("GameOverLabel").show()
 			game_running = false
-		elif movement_directions[spawn_side] == Vector2i(1, 0) and cur_pos.x >= 27:
+		elif movement_directions[spawn_side] == Vector2i(1, 0) and cur_pos.x >= 25:
 			$HUD.get_node("GameOverLabel").show()
 			game_running = false
 		
 	else:
 		#if dir == Vector2i.DOWN:
-		if dir == movement_directions[spawn_side]:
+		if dir == movement_directions[spawn_side] and is_color_adjacent_tiles_enabled:
 			land_piece()
-			piece_count += 1
 			$HUD.get_node("PiecesLabel").text = "Pieces: " + str(piece_count)
 			#check_rows()
 			piece_type = next_piece_type
@@ -449,8 +449,9 @@ func move_piece(dir):
 			next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
 			clear_panel()
 			spawn_side = randi() % 4
+			#if is_color_adjacent_tiles_enabled == true:
 			create_piece()
-			check_game_over()
+			#check_game_over()
 
 func can_move(dir):
 	#check if there is space to move
@@ -697,39 +698,56 @@ func update_adjacent_tiles():
 			new_atlas = Vector2i(6, 0)
 			blue_tiles += 1
 			$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
-		if is_color_adjacent_tiles_enabled:
-			set_cell(board_layer, pos, tile_id, new_atlas)
+		#if is_color_adjacent_tiles_enabled:
+		set_cell(board_layer, pos, tile_id, new_atlas)
 			
-		#TODO - Separar em um método que define estas cores de acrdo
-		# com a fase
-		if red_tiles >= 3:
-			panel_red_node.change_color(Color(1,0,0)) 
-		else:
-			panel_red_node.change_color(Color(0, 1, 0)) 
+	#TODO - Separar em um método que define estas cores de acrdo
+	# com a fase
+	if red_tiles >= 3:
+		panel_red_node.change_color(Color(1,0,0)) 
+	else:
+		panel_red_node.change_color(Color(0, 1, 0)) 
+		
+	if blue_tiles <= 6:
+		panel_blue_node.change_color(Color(1, 0, 0)) 
+	else:
+		panel_blue_node.change_color(Color(0, 1, 0))
 			
-		if blue_tiles <= 6:
-			panel_blue_node.change_color(Color(1, 0, 0)) 
-		else:
-			panel_blue_node.change_color(Color(0, 1, 0))
-			
-			
+	piece_count += 1
 		#seta condicionais para avançar de estágio - 
 		#Stage 1:
-		if piece_count >= 9 and blue_tiles >= 6 and red_tiles <= 2:
-			stage += 1
-			$HUD.get_node("StageLabel").text = "Stage: " + str(stage)
-			clear_board()
-			piece_count = 0
-			blue_tiles = 0
-			red_tiles = 0
-			special_positions = []
-			is_color_adjacent_tiles_enabled = false
-			create_fixed_center_piece()
-		#problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
-		elif piece_count >= 9 and blue_tiles <= 6 and red_tiles >= 3:
-			$HUD.get_node("GameOverLabel").show()
-			game_running = false
-			
+	if piece_count == 4: #and blue_tiles >= 1 and red_tiles <= 2:
+		is_color_adjacent_tiles_enabled = false
+		await show_level_completed()
+		#game_running = true
+		stage += 1
+		$HUD.get_node("StageLabel").text = "Stage: " + str(stage)
+		clear_board()
+		piece_count = 0
+		blue_tiles = 0
+		red_tiles = 0
+		special_positions = []
+		create_fixed_center_piece()
+		await get_tree().create_timer(2).timeout
+		game_running = true
+		is_color_adjacent_tiles_enabled = true
+		updateHudLabels()
+		
+	#problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
+	elif piece_count >= 9 and blue_tiles <= 6 and red_tiles >= 3:
+		$HUD.get_node("GameOverLabel").show()
+		game_running = false
+		
+# Exibe "Level Completed" por 2 segundos
+func show_level_completed():
+	var level_label = $HUD.get_node("LevelCompletedLabel")
+	level_label.text = "LEVEL COMPLETED!"
+	game_running = false
+	level_label.show()
+	await get_tree().create_timer(2).timeout
+	level_label.hide()
+	await get_tree().create_timer(1).timeout  # Espera 1 segundo antes do próximo texto
+	
 			
 func clear_panel():
 	for i in range(36, 42):
@@ -774,4 +792,9 @@ func check_game_over():
 			land_piece()
 			$HUD.get_node("GameOverLabel").show()
 			game_running = false
+
+func updateHudLabels():
+	$HUD.get_node("PiecesLabel").text = "Pieces: " + str(piece_count)
+	$HUD.get_node("RedTilesLabel").text = "= " + str(red_tiles)
+	$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
 
