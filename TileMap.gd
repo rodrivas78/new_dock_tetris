@@ -99,7 +99,7 @@ var blue_tiles : int = 0
 var score : int
 const REWARD : int = 100
 var game_running : bool
-var is_color_adjacent_tiles_enabled : bool = true
+var pick_or_create_piece_enabled : bool = true
 
 #tilemap variables
 var tile_id : int = 0
@@ -132,7 +132,7 @@ func new_game():
 	blue_tiles = 0
 	piece_count = 0
 	special_positions = []
-	is_color_adjacent_tiles_enabled = true
+	pick_or_create_piece_enabled = true
 	score = 0
 	speed = 1.0
 	game_running = true
@@ -439,7 +439,7 @@ func move_piece(dir):
 		
 	else:
 		#if dir == Vector2i.DOWN:
-		if dir == movement_directions[spawn_side] and is_color_adjacent_tiles_enabled:
+		if dir == movement_directions[spawn_side] and pick_or_create_piece_enabled:
 			land_piece()
 			$HUD.get_node("PiecesLabel").text = "Pieces: " + str(piece_count)
 			#check_rows()
@@ -449,7 +449,6 @@ func move_piece(dir):
 			next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
 			clear_panel()
 			spawn_side = randi() % 4
-			#if is_color_adjacent_tiles_enabled == true:
 			create_piece()
 			#check_game_over()
 
@@ -698,7 +697,7 @@ func update_adjacent_tiles():
 			new_atlas = Vector2i(6, 0)
 			blue_tiles += 1
 			$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
-		#if is_color_adjacent_tiles_enabled:
+	
 		set_cell(board_layer, pos, tile_id, new_atlas)
 			
 	#TODO - Separar em um método que define estas cores de acrdo
@@ -716,8 +715,8 @@ func update_adjacent_tiles():
 	piece_count += 1
 		#seta condicionais para avançar de estágio - 
 		#Stage 1:
-	if piece_count == 4: #and blue_tiles >= 1 and red_tiles <= 2:
-		is_color_adjacent_tiles_enabled = false
+	if piece_count == 12: #and blue_tiles >= 1 and red_tiles <= 2:
+		pick_or_create_piece_enabled = false
 		await show_level_completed()
 		#game_running = true
 		stage += 1
@@ -730,7 +729,7 @@ func update_adjacent_tiles():
 		create_fixed_center_piece()
 		await get_tree().create_timer(2).timeout
 		game_running = true
-		is_color_adjacent_tiles_enabled = true
+		pick_or_create_piece_enabled = true
 		updateHudLabels()
 		
 	#problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
@@ -744,7 +743,7 @@ func show_level_completed():
 	level_label.text = "LEVEL COMPLETED!"
 	game_running = false
 	level_label.show()
-	await get_tree().create_timer(2).timeout
+	await get_tree().create_timer(3).timeout
 	level_label.hide()
 	await get_tree().create_timer(1).timeout  # Espera 1 segundo antes do próximo texto
 	
