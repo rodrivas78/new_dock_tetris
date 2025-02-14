@@ -1,12 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://psjnbhu2tahx"]
+[gd_scene load_steps=8 format=3 uid="uid://psjnbhu2tahx"]
+
+[ext_resource type="Script" path="res://scenes/RedTilesPanel.gd" id="1_ew37b"]
+[ext_resource type="Script" path="res://scenes/BlueTilesPanel.gd" id="2_o10fp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xosvn"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.054902, 0.054902, 0.054902, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.27451, 0.133333, 0.831373, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gt3c6"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.262745, 0.85098, 0.231373, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_42puf"]
 bg_color = Color(0.443137, 0.643137, 0.643137, 1)
@@ -20,16 +31,35 @@ bg_color = Color(0.470588, 0.654902, 0.490196, 1)
 [node name="HUD" type="CanvasLayer"]
 
 [node name="Panel" type="Panel" parent="."]
-offset_left = 1159.0
+modulate = Color(0, 0, 0.360784, 1)
+offset_left = 1119.0
 offset_top = 134.0
-offset_right = 1359.0
+offset_right = 1319.0
 offset_bottom = 284.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_xosvn")
 
+[node name="RedTilesPanel" type="Panel" parent="."]
+modulate = Color(0.168627, 0.85098, 0.231373, 1)
+offset_left = 1119.0
+offset_top = 661.0
+offset_right = 1319.0
+offset_bottom = 717.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gt3c6")
+script = ExtResource("1_ew37b")
+
+[node name="BlueTilesPanel" type="Panel" parent="."]
+modulate = Color(0.168627, 0.85098, 0.231373, 1)
+offset_left = 1119.0
+offset_top = 756.0
+offset_right = 1319.0
+offset_bottom = 812.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gt3c6")
+script = ExtResource("2_o10fp")
+
 [node name="Label" type="Label" parent="."]
-offset_left = 1159.0
+offset_left = 1135.0
 offset_top = 60.0
-offset_right = 1339.0
+offset_right = 1315.0
 offset_bottom = 105.0
 theme_override_font_sizes/font_size = 30
 text = "NEXT PIECE:"
@@ -48,9 +78,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="PiecesLabel" type="Label" parent="."]
-offset_left = 1159.0
+offset_left = 1103.0
 offset_top = 364.0
-offset_right = 1399.0
+offset_right = 1343.0
 offset_bottom = 409.0
 theme_override_font_sizes/font_size = 30
 text = "Pieces: 0"
@@ -58,30 +88,30 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="RedTilesLabel" type="Label" parent="."]
-offset_left = 1159.0
-offset_top = 553.0
-offset_right = 1399.0
-offset_bottom = 598.0
+offset_left = 1103.0
+offset_top = 666.0
+offset_right = 1343.0
+offset_bottom = 711.0
 theme_override_font_sizes/font_size = 30
-text = "Red Tiles: 0"
+text = "= 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BlueTilesLabel" type="Label" parent="."]
-offset_left = 1159.0
-offset_top = 598.0
-offset_right = 1399.0
-offset_bottom = 643.0
+offset_left = 1103.0
+offset_top = 762.0
+offset_right = 1343.0
+offset_bottom = 807.0
 theme_override_font_sizes/font_size = 30
-text = "Blue Tiles: 0"
+text = "= 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="StageLabel" type="Label" parent="."]
-offset_left = 1159.0
-offset_top = 674.0
-offset_right = 1399.0
-offset_bottom = 719.0
+offset_left = 1103.0
+offset_top = 842.0
+offset_right = 1343.0
+offset_bottom = 887.0
 theme_override_font_sizes/font_size = 30
 text = "Stage: 1"
 horizontal_alignment = 1
@@ -98,10 +128,20 @@ text = "GAME OVER!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="LevelCompletedLabel" type="Label" parent="."]
+offset_left = 274.0
+offset_top = 393.0
+offset_right = 574.0
+offset_bottom = 485.0
+scale = Vector2(1.5, 1.5)
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="StartButton" type="Button" parent="."]
-offset_left = 1190.0
+offset_left = 1134.0
 offset_top = 467.0
-offset_right = 1370.0
+offset_right = 1314.0
 offset_bottom = 507.0
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_42puf")
