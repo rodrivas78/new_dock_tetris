@@ -688,7 +688,7 @@ func update_adjacent_tiles():
 		if occupied_count == 1:  #Vermelho
 			new_atlas = Vector2i(3, 0)
 			red_tiles += 1
-			$HUD.get_node("RedTilesLabel").text = "= " + str(red_tiles)
+			#$HUD.get_node("RedTilesLabel").text = "= " + str(red_tiles)
 		elif occupied_count == 2:  
 			new_atlas = Vector2i(2, 0)
 		elif occupied_count == 3:  
@@ -696,10 +696,11 @@ func update_adjacent_tiles():
 		elif occupied_count == 4:  
 			new_atlas = Vector2i(6, 0)
 			blue_tiles += 1
-			$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
+			#$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
 	
 		set_cell(board_layer, pos, tile_id, new_atlas)
 			
+	updateHudLabels()
 	#TODO - Separar em um método que define estas cores de acrdo
 	# com a fase
 	if red_tiles >= 3:
@@ -715,27 +716,48 @@ func update_adjacent_tiles():
 	piece_count += 1
 		#seta condicionais para avançar de estágio - 
 		#Stage 1:
-	if piece_count == 12: #and blue_tiles >= 1 and red_tiles <= 2:
-		pick_or_create_piece_enabled = false
-		await show_level_completed()
+	if piece_count == 10:
+		if blue_tiles >= 4 and red_tiles <= 3:
+			pick_or_create_piece_enabled = false
+			await show_level_completed()
+			stage += 1
+			$HUD.get_node("StageLabel").text = "Stage: " + str(stage)
+			clear_board()
+			piece_count = 0
+			blue_tiles = 0
+			red_tiles = 0
+			special_positions = []
+			create_fixed_center_piece()
+			await get_tree().create_timer(2).timeout
+			game_running = true
+			pick_or_create_piece_enabled = true
+			updateHudLabels()
+		else:
+		# Se não atender aos critérios, Game Over
+			$HUD.get_node("GameOverLabel").show()
+			game_running = false
+
+	#if piece_count == 10 and blue_tiles >= 4 and red_tiles <= 3:
+		#pick_or_create_piece_enabled = false
+		#await show_level_completed()
+		##game_running = true
+		#stage += 1
+		#$HUD.get_node("StageLabel").text = "Stage: " + str(stage)
+		#clear_board()
+		#piece_count = 0
+		#blue_tiles = 0
+		#red_tiles = 0
+		#special_positions = []
+		#create_fixed_center_piece()
+		#await get_tree().create_timer(2).timeout
 		#game_running = true
-		stage += 1
-		$HUD.get_node("StageLabel").text = "Stage: " + str(stage)
-		clear_board()
-		piece_count = 0
-		blue_tiles = 0
-		red_tiles = 0
-		special_positions = []
-		create_fixed_center_piece()
-		await get_tree().create_timer(2).timeout
-		game_running = true
-		pick_or_create_piece_enabled = true
-		updateHudLabels()
-		
-	#problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
-	elif piece_count >= 9 and blue_tiles <= 6 and red_tiles >= 3:
-		$HUD.get_node("GameOverLabel").show()
-		game_running = false
+		#pick_or_create_piece_enabled = true
+		#updateHudLabels()
+		#
+	##problema de lógica, se blue_tiles for > 6 não entrará no elif (game over)
+	#elif piece_count >= 9 and blue_tiles <= 4 and red_tiles >= 3:
+		#$HUD.get_node("GameOverLabel").show()
+		#game_running = false
 		
 # Exibe "Level Completed" por 2 segundos
 func show_level_completed():
