@@ -712,7 +712,7 @@ var stage_conditions = {
 	3: { "total_pieces": 12, "min_blue": 8, "max_red": 2 },
 	4: { "total_pieces": 12, "min_blue": 9, "max_red": 2 },
 	5: { "total_pieces": 14, "min_blue": 10, "max_red": 2 },
-	6: { "total_pieces": 14, "min_blue": 11, "max_red": 1 },
+	6: { "total_pieces": 14, "min_blue": 11, "max_red": 2 },
 	7: { "total_pieces": 16, "min_blue": 12, "max_red": 1 },
 	8: { "total_pieces": 16, "min_blue": 13, "max_red": 1 },
 	9: { "total_pieces": 18, "min_blue": 14, "max_red": 1 },
