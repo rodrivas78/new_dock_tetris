@@ -97,9 +97,11 @@ var piece_count : int = 0
 var red_tiles : int = 0
 var blue_tiles : int = 0
 var score : int
+var hi_score: int
 const REWARD : int = 100
 var game_running : bool
 var pick_or_create_piece_enabled : bool = true
+var is_continue_enabled : bool = false
 
 #tilemap variables
 var tile_id : int = 0
@@ -122,23 +124,59 @@ func _ready():
 	new_game()
 	$HUD.get_node("StartButton").pressed.connect(new_game)
 	
+#func new_game():
+	##reset variables
+	#panel_red_node.change_color(Color(0,1,0)) 
+	#panel_blue_node.change_color(Color(1,0,0)) 
+	#$HUD.get_node("StartButton").release_focus()
+	#stage = 1
+	#red_tiles = 0
+	#blue_tiles = 0
+	#piece_count = 0
+	#special_positions = []
+	#pick_or_create_piece_enabled = true
+	#score = 0
+	#speed = 1.0
+	#game_running = true
+	#steps = [0, 0, 0, 0] #0:left, 1:right, 2:down
+	#$HUD.get_node("GameOverLabel").hide()
+	##clear everything
+	#clear_piece()
+	#clear_board()
+	#clear_panel()
+	#create_fixed_center_piece()
+	#piece_type = pick_piece()
+	#piece_atlas = Vector2i(shapes_full.find(piece_type), 0)
+	#next_piece_type = pick_piece()
+	#next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
+	#spawn_side = randi() % 4
+	#create_piece()
+	#updateHudLabels()
+	
 func new_game():
-	#reset variables
+	# Reset de variáveis dependendo se é um "continue" ou um novo jogo
 	panel_red_node.change_color(Color(0,1,0)) 
 	panel_blue_node.change_color(Color(1,0,0)) 
 	$HUD.get_node("StartButton").release_focus()
-	stage = 1
+	$HUD.get_node("ContinueButton").release_focus()
+	
+	# Se for um novo jogo (não continuação), resetamos tudo
+	if not is_continue_enabled:
+		stage = 1
+		speed = 1.0  # Reset da velocidade apenas no novo jogo
+	
+	# Reset de variáveis para ambos os casos
+	score = 0
 	red_tiles = 0
 	blue_tiles = 0
 	piece_count = 0
 	special_positions = []
 	pick_or_create_piece_enabled = true
-	score = 0
-	speed = 1.0
 	game_running = true
-	steps = [0, 0, 0, 0] #0:left, 1:right, 2:down
+	steps = [0, 0, 0, 0] # 0:left, 1:right, 2:down
 	$HUD.get_node("GameOverLabel").hide()
-	#clear everything
+
+	# Limpeza da tela e reinício do jogo
 	clear_piece()
 	clear_board()
 	clear_panel()
@@ -150,6 +188,11 @@ func new_game():
 	spawn_side = randi() % 4
 	create_piece()
 	updateHudLabels()
+	
+	# Desativa o modo de continuação após a execução
+	is_continue_enabled = false
+	$HUD.get_node("ContinueButton").hide()
+	$HUD.get_node("StartButton").flat = false
 
 # Adiciona uma peça fixa no centro do tabuleiro no início do jogo
 func create_fixed_center_piece():
@@ -426,17 +469,21 @@ func move_piece(dir):
 		draw_piece(active_piece, cur_pos, piece_atlas)
 		#detects if piece has passed the central block
 		if movement_directions[spawn_side] == Vector2i(0, 1) and cur_pos.y >= 25:
-			$HUD.get_node("GameOverLabel").show()
-			game_running = false
+			#$HUD.get_node("GameOverLabel").show()
+			#game_running = false
+			game_over()
 		elif movement_directions[spawn_side] == Vector2i(-1, 0) and cur_pos.x <= 2:
-			$HUD.get_node("GameOverLabel").show()
-			game_running = false
+			#$HUD.get_node("GameOverLabel").show()
+			#game_running = false
+			game_over()
 		elif movement_directions[spawn_side] == Vector2i(0, -1) and cur_pos.y <= 2:
-			$HUD.get_node("GameOverLabel").show()
-			game_running = false
+			#$HUD.get_node("GameOverLabel").show()
+			#game_running = false
+			game_over()
 		elif movement_directions[spawn_side] == Vector2i(1, 0) and cur_pos.x >= 25:
-			$HUD.get_node("GameOverLabel").show()
-			game_running = false
+			#$HUD.get_node("GameOverLabel").show()
+			#game_running = false
+			game_over()
 		
 	else:
 		#if dir == Vector2i.DOWN:
@@ -741,45 +788,7 @@ func check_stage_conditions():
 			else:
 				game_over()
 			
-func calculate_score():
-	var blue_multiplication_factor = $HUD.get_node("BlueMultiplicationFactor")
-	var red_bonus_factor = $HUD.get_node("RedMultiplicationFactor")
-	var red_tiles_panel = $HUD.get_node("RedTilesPanel")
-	var blue_tiles_panel = $HUD.get_node("BlueTilesPanel")
-	
-	blue_multiplication_factor.show()
-	red_bonus_factor.show()
-	red_tiles_panel.hide()
-	blue_tiles_panel.hide()
-	
-	var score_increment = (blue_tiles * 50) # Cada peça azul vale 50 pontos
-	
-	# Lógica de pontuação para peças vermelhas
-	match red_tiles:
-		0:
-			score_increment += 300
-			red_bonus_factor.text = "+300"
-		1:
-			score_increment += 200
-			red_bonus_factor.text = "+200"
-		2:
-			score_increment += 100
-			red_bonus_factor.text = "+100"
-	
-	# Atualiza o score
-	score += score_increment
-	#print("Pontuação adicionada:", score_increment, " | Score total:", score)
-	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
-	await get_tree().create_timer(4).timeout
-	
-	blue_multiplication_factor.hide()
-	red_bonus_factor.hide()
-	red_tiles_panel.show()
-	blue_tiles_panel.show()
-	# Chama advance_stage() após calcular os pontos
-	#advance_stage()
-
-
+				
 func advance_stage():
 	pick_or_create_piece_enabled = false
 	await show_level_completed()
@@ -796,10 +805,6 @@ func advance_stage():
 	pick_or_create_piece_enabled = true
 	updateHudLabels()
 	check_stage_conditions()
-
-func game_over():
-	$HUD.get_node("GameOverLabel").show()
-	game_running = false
 					
 func update_panel_colors(min_blue, max_red):
 	# Atualiza a cor do painel vermelho
@@ -821,14 +826,73 @@ func show_level_completed():
 	game_running = false
 	level_label.show()
 	await get_tree().create_timer(3).timeout
-	level_label.hide()
-	await get_tree().create_timer(1).timeout  # Espera 1 segundo antes do próximo texto
+	#level_label.hide()
+	#await get_tree().create_timer(1).timeout  # Espera 1 segundo antes do próximo texto
 	
-			
+func calculate_score():
+	var blue_multiplication_factor = $HUD.get_node("BlueMultiplicationFactor")
+	var red_bonus_factor = $HUD.get_node("RedMultiplicationFactor")
+	var red_tiles_panel = $HUD.get_node("RedTilesPanel")
+	var blue_tiles_panel = $HUD.get_node("BlueTilesPanel")
+	$HUD.get_node("LevelCompletedLabel").hide()
+	
+	blue_multiplication_factor.show()
+	red_bonus_factor.show()
+	red_tiles_panel.hide()
+	blue_tiles_panel.hide()
+	
+	var score_increment = (blue_tiles * 50) # Cada peça azul vale 50 pontos
+	
+	# Lógica de pontuação para peças vermelhas
+	match red_tiles:
+		0:
+			score_increment += 300
+			red_bonus_factor.text = "+300"
+		1:
+			score_increment += 200
+			red_bonus_factor.text = "+200"
+		2:
+			score_increment += 100
+			red_bonus_factor.text = "+100"
+		_:
+			score_increment += 0  # Ou apenas não faça nada
+			red_bonus_factor.text = ""
+	
+	# Atualiza o score
+	score += score_increment
+	#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+	
+	if score >= hi_score:
+		hi_score = score
+	
+	await get_tree().create_timer(2).timeout
+	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+	await get_tree().create_timer(1).timeout
+	
+	blue_multiplication_factor.hide()
+	red_bonus_factor.hide()
+	red_tiles_panel.show()
+	blue_tiles_panel.show()
+	# Chama advance_stage() após calcular os pontos
+	
 func clear_panel():
 	for i in range(36, 42):
 		for j in range(4, 8):
 			erase_cell(active_layer, Vector2i(i, j))
+			
+
+func game_over():
+	$HUD.get_node("GameOverLabel").show()
+	$HUD.get_node("ContinueButton").show()
+	
+	$HUD.get_node("StartButton").flat = true
+	
+	$HUD.get_node("ContinueButton").pressed.connect(continue_game)
+	game_running = false
+	
+func continue_game():
+	is_continue_enabled = true  # Ativa a flag de continuação
+	new_game()  # Chama new_game() com a flag ativada
 
 func check_rows():
 	var row : int = ROWS
@@ -875,3 +939,4 @@ func updateHudLabels():
 	$HUD.get_node("RedTilesLabel").text = "= " + str(red_tiles)
 	$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
 	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+	$HUD.get_node("HiScoreLabel").text = "HI-SCORE: " + str(hi_score)
