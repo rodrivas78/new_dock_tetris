@@ -686,15 +686,15 @@ func update_adjacent_tiles():
 				occupied_count += 1
 		# Define a cor apenas para 1 a 4 espaços ocupados
 		var new_atlas = piece_atlas  # Mantém a cor original por padrão
-		if occupied_count == 1:  #Vermelho
-			new_atlas = Vector2i(3, 0)
+		if occupied_count == 1:  
+			new_atlas = Vector2i(3, 0) #vermelho
 			red_tiles += 1
 		elif occupied_count == 2:  
-			new_atlas = Vector2i(2, 0)
+			new_atlas = Vector2i(2, 0) #amarelo
 		elif occupied_count == 3:  
-			new_atlas = Vector2i(4, 0)
+			new_atlas = Vector2i(4, 0) #verde
 		elif occupied_count == 4:  
-			new_atlas = Vector2i(6, 0)
+			new_atlas = Vector2i(6, 0) #azul
 			blue_tiles += 1
 	
 		set_cell(board_layer, pos, tile_id, new_atlas)
@@ -716,7 +716,12 @@ var stage_conditions = {
 	7: { "total_pieces": 16, "min_blue": 12, "max_red": 1 },
 	8: { "total_pieces": 16, "min_blue": 13, "max_red": 1 },
 	9: { "total_pieces": 18, "min_blue": 14, "max_red": 1 },
-	10: { "total_pieces": 18, "min_blue": 15, "max_red": 0 },
+	10: { "total_pieces": 18, "min_blue": 15, "max_red": 1 },
+	11: { "total_pieces": 20, "min_blue": 16, "max_red": 0 },
+	12: { "total_pieces": 20, "min_blue": 17, "max_red": 0 },
+	13: { "total_pieces": 22, "min_blue": 18, "max_red": 0 },
+	14: { "total_pieces": 22, "min_blue": 19, "max_red": 0 },
+	15: { "total_pieces": 24, "min_blue": 20, "max_red": 0 },
 }
 
 func check_stage_conditions():
@@ -731,13 +736,54 @@ func check_stage_conditions():
 		
 		if piece_count == total_pieces:
 			if blue_tiles >= min_blue and red_tiles <= max_red:
+				#chamar  método de contagem de pontos
 				advance_stage()
 			else:
 				game_over()
+			
+func calculate_score():
+	var blue_multiplication_factor = $HUD.get_node("BlueMultiplicationFactor")
+	var red_bonus_factor = $HUD.get_node("RedMultiplicationFactor")
+	var red_tiles_panel = $HUD.get_node("RedTilesPanel")
+	var blue_tiles_panel = $HUD.get_node("BlueTilesPanel")
+	
+	blue_multiplication_factor.show()
+	red_bonus_factor.show()
+	red_tiles_panel.hide()
+	blue_tiles_panel.hide()
+	
+	var score_increment = (blue_tiles * 50) # Cada peça azul vale 50 pontos
+	
+	# Lógica de pontuação para peças vermelhas
+	match red_tiles:
+		0:
+			score_increment += 300
+			red_bonus_factor.text = "+300"
+		1:
+			score_increment += 200
+			red_bonus_factor.text = "+200"
+		2:
+			score_increment += 100
+			red_bonus_factor.text = "+100"
+	
+	# Atualiza o score
+	score += score_increment
+	#print("Pontuação adicionada:", score_increment, " | Score total:", score)
+	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+	await get_tree().create_timer(4).timeout
+	
+	blue_multiplication_factor.hide()
+	red_bonus_factor.hide()
+	red_tiles_panel.show()
+	blue_tiles_panel.show()
+	# Chama advance_stage() após calcular os pontos
+	#advance_stage()
+
 
 func advance_stage():
 	pick_or_create_piece_enabled = false
 	await show_level_completed()
+	await calculate_score()
 	stage += 1
 	clear_board()
 	piece_count = 0
@@ -828,3 +874,4 @@ func updateHudLabels():
 	$HUD.get_node("PiecesLabel").text = "Pieces: " + str(piece_count)
 	$HUD.get_node("RedTilesLabel").text = "= " + str(red_tiles)
 	$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
+	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)

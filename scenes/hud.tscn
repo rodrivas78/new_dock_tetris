@@ -67,21 +67,20 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ScoreLabel" type="Label" parent="."]
-visible = false
-offset_left = 1159.0
-offset_top = 364.0
-offset_right = 1399.0
-offset_bottom = 409.0
+offset_left = 1103.0
+offset_top = 385.0
+offset_right = 1343.0
+offset_bottom = 430.0
 theme_override_font_sizes/font_size = 30
-text = "Pieces: 0"
+text = "Score: 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="PiecesLabel" type="Label" parent="."]
 offset_left = 1103.0
-offset_top = 364.0
+offset_top = 324.0
 offset_right = 1343.0
-offset_bottom = 409.0
+offset_bottom = 369.0
 theme_override_font_sizes/font_size = 30
 text = "Pieces: 0"
 horizontal_alignment = 1
@@ -107,11 +106,33 @@ text = "= 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="RedMultiplicationFactor" type="Label" parent="."]
+visible = false
+offset_left = 1191.0
+offset_top = 666.0
+offset_right = 1431.0
+offset_bottom = 711.0
+theme_override_font_sizes/font_size = 30
+text = "+100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BlueMultiplicationFactor" type="Label" parent="."]
+visible = false
+offset_left = 1195.0
+offset_top = 760.0
+offset_right = 1435.0
+offset_bottom = 805.0
+theme_override_font_sizes/font_size = 30
+text = "x50"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="StageLabel" type="Label" parent="."]
 offset_left = 1103.0
-offset_top = 842.0
+offset_top = 850.0
 offset_right = 1343.0
-offset_bottom = 887.0
+offset_bottom = 895.0
 theme_override_font_sizes/font_size = 30
 text = "Stage: 1"
 horizontal_alignment = 1

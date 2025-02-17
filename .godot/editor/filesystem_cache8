@@ -1,8 +1,8 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1739493868
+::res://::1739755842
 icon.svg::CompressedTexture2D::8022950268032425709::1698682286::1738811269::1::::<><>::
 README.md::TextFile::-1::1739065668::0::1::::<><>::
-TileMap.gd::GDScript::-1::1739423158::0::1::::<>TileMap<>::
+TileMap.gd::GDScript::-1::1739506568::0::1::::<>TileMap<>::
 ::res://addons/::1739063746
 ::res://addons/godot-git-plugin/::1739064989
 ::res://addons/godot-git-plugin/win64/::1739065308
@@ -10,8 +10,8 @@ TileMap.gd::GDScript::-1::1739423158::0::1::::<>TileMap<>::
 bg3.jpg::CompressedTexture2D::7711317962680455954::1739242763::1739244337::1::::<><>::
 bg4.jpg::CompressedTexture2D::3176922395980804255::1739243130::1739244337::1::::<><>::
 tetrominoes.png::CompressedTexture2D::3978852843116046020::1698682286::1738811269::1::::<><>::
-::res://scenes/::1739423159
+::res://scenes/::1739587963
 BlueTilesPanel.gd::GDScript::-1::1739327671::0::1::::<>Panel<>::
-hud.tscn::PackedScene::1090561186681741197::1739423158::0::1::::<><>::res://scenes/RedTilesPanel.gd<>res://scenes/BlueTilesPanel.gd
+hud.tscn::PackedScene::1090561186681741197::1739587963::0::1::::<><>::res://scenes/RedTilesPanel.gd<>res://scenes/BlueTilesPanel.gd
 RedTilesPanel.gd::GDScript::-1::1739325379::0::1::::<>Panel<>::
-tile_map.tscn::PackedScene::1527533068643854010::1739423159::0::1::::<><>::uid://bwxneirljy70c::::res://assets/tetrominoes.png<>res://TileMap.gd<>uid://psjnbhu2tahx::::res://scenes/hud.tscn<>uid://bli6phsx3enbj::::res://assets/bg4.jpg<>uid://dh4ojr6jvlmry::::res://assets/bg3.jpg
+tile_map.tscn::PackedScene::1527533068643854010::1739587963::0::1::::<><>::uid://bwxneirljy70c::::res://assets/tetrominoes.png<>res://TileMap.gd<>uid://psjnbhu2tahx::::res://scenes/hud.tscn<>uid://bli6phsx3enbj::::res://assets/bg4.jpg<>uid://dh4ojr6jvlmry::::res://assets/bg3.jpg
