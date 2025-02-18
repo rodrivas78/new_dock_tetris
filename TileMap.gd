@@ -124,35 +124,6 @@ func _ready():
 	new_game()
 	$HUD.get_node("StartButton").pressed.connect(new_game)
 	
-#func new_game():
-	##reset variables
-	#panel_red_node.change_color(Color(0,1,0)) 
-	#panel_blue_node.change_color(Color(1,0,0)) 
-	#$HUD.get_node("StartButton").release_focus()
-	#stage = 1
-	#red_tiles = 0
-	#blue_tiles = 0
-	#piece_count = 0
-	#special_positions = []
-	#pick_or_create_piece_enabled = true
-	#score = 0
-	#speed = 1.0
-	#game_running = true
-	#steps = [0, 0, 0, 0] #0:left, 1:right, 2:down
-	#$HUD.get_node("GameOverLabel").hide()
-	##clear everything
-	#clear_piece()
-	#clear_board()
-	#clear_panel()
-	#create_fixed_center_piece()
-	#piece_type = pick_piece()
-	#piece_atlas = Vector2i(shapes_full.find(piece_type), 0)
-	#next_piece_type = pick_piece()
-	#next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
-	#spawn_side = randi() % 4
-	#create_piece()
-	#updateHudLabels()
-	
 func new_game():
 	# Reset de variáveis dependendo se é um "continue" ou um novo jogo
 	panel_red_node.change_color(Color(0,1,0)) 
