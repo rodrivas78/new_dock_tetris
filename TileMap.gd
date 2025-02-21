@@ -117,11 +117,19 @@ var special_positions := []
 
 @onready var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var panel_blue_node = $HUD.get_node("BlueTilesPanel")
+@onready var closed_board = get_node("Sprite2D2")
 #var panel_red_node = $HUD.get_node("RedTilesPanel")
+@onready var moveSound : AudioStreamPlayer = $AudioStreamPlayer
+@onready var rotateSound : AudioStreamPlayer = $AudioStreamPlayer2
+@onready var dockSound : AudioStreamPlayer = $AudioStreamPlayer3
+@onready var dockSound2 : AudioStreamPlayer = $AudioStreamPlayer4
+
+@onready var gameMusic : AudioStreamPlayer = $GameMusic
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	new_game()
+	#new_game()
+	closed_board.visible = true
 	$HUD.get_node("StartButton").pressed.connect(new_game)
 	
 func new_game():
@@ -131,10 +139,13 @@ func new_game():
 	$HUD.get_node("StartButton").release_focus()
 	$HUD.get_node("ContinueButton").release_focus()
 	
+	closed_board.visible = false
+	
 	# Se for um novo jogo (não continuação), resetamos tudo
 	if not is_continue_enabled:
 		stage = 1
 		speed = 1.0  # Reset da velocidade apenas no novo jogo
+		gameMusic.play()
 	
 	# Reset de variáveis para ambos os casos
 	score = 0
@@ -212,6 +223,7 @@ func _process(delta):
 		
 		# Rotação sempre permitida
 		if Input.is_action_just_pressed("rotate_piece"):
+			rotateSound.play()
 			rotate_piece()        
 		
 		# Aplicar movimentos manuais
@@ -219,6 +231,7 @@ func _process(delta):
 			if steps[i] > steps_req:
 				move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
 				steps[i] = 0
+				#moveSound.play()
 
 		# Movimento automático na direção oposta ao lado de surgimento
 		steps[2] += speed  # Incrementamos o contador para o movimento automático
@@ -438,27 +451,21 @@ func move_piece(dir):
 		clear_piece()
 		cur_pos += dir
 		draw_piece(active_piece, cur_pos, piece_atlas)
+
 		#detects if piece has passed the central block
 		if movement_directions[spawn_side] == Vector2i(0, 1) and cur_pos.y >= 25:
-			#$HUD.get_node("GameOverLabel").show()
-			#game_running = false
 			game_over()
 		elif movement_directions[spawn_side] == Vector2i(-1, 0) and cur_pos.x <= 2:
-			#$HUD.get_node("GameOverLabel").show()
-			#game_running = false
 			game_over()
 		elif movement_directions[spawn_side] == Vector2i(0, -1) and cur_pos.y <= 2:
-			#$HUD.get_node("GameOverLabel").show()
-			#game_running = false
 			game_over()
 		elif movement_directions[spawn_side] == Vector2i(1, 0) and cur_pos.x >= 25:
-			#$HUD.get_node("GameOverLabel").show()
-			#game_running = false
 			game_over()
 		
 	else:
 		#if dir == Vector2i.DOWN:
 		if dir == movement_directions[spawn_side] and pick_or_create_piece_enabled:
+			dockSound.play()
 			land_piece()
 			$HUD.get_node("PiecesLabel").text = "Pieces: " + str(piece_count)
 			#check_rows()
@@ -471,13 +478,25 @@ func move_piece(dir):
 			create_piece()
 			#check_game_over()
 
+
 func can_move(dir):
-	#check if there is space to move
-	var cm = true
+# Calcula a nova posição desejada
+	var new_pos = cur_pos + dir
+# Aplica os limites dependendo da direção de movimento
+	if movement_directions[spawn_side] in [Vector2i(0, 1), Vector2i(0, -1)]:  # Movimento vertical
+		if new_pos.x < 1 or new_pos.x > 28:
+			return false
+	elif movement_directions[spawn_side] in [Vector2i(1, 0), Vector2i(-1, 0)]:  # Movimento horizontal
+		if new_pos.y < 1 or new_pos.y > 26: 
+			return false
+
+# Verifica se há espaço livre para mover
 	for i in active_piece:
-		if not is_free(i + cur_pos + dir):
-			cm = false
-	return cm
+		if not is_free(i + new_pos):
+			return false
+		
+	return true
+
 
 func can_rotate():
 	var cr = true
@@ -853,6 +872,7 @@ func clear_panel():
 			
 
 func game_over():
+	closed_board.visible = true
 	$HUD.get_node("GameOverLabel").show()
 	$HUD.get_node("ContinueButton").show()
 	

@@ -1,10 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=13 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
 [ext_resource type="PackedScene" uid="uid://psjnbhu2tahx" path="res://scenes/hud.tscn" id="3_vxlsc"]
 [ext_resource type="Texture2D" uid="uid://bli6phsx3enbj" path="res://assets/bg4.jpg" id="4_birf1"]
 [ext_resource type="Texture2D" uid="uid://dh4ojr6jvlmry" path="res://assets/bg3.jpg" id="4_js3uj"]
+[ext_resource type="AudioStream" uid="uid://b6nyegslw43b8" path="res://assets/sounds/SFX4.mp3" id="6_olsjb"]
+[ext_resource type="AudioStream" uid="uid://cpwuujhfog3av" path="res://assets/sounds/SFX6.mp3" id="7_co3w3"]
+[ext_resource type="AudioStream" uid="uid://kr12lku34mck" path="res://assets/sounds/SFX8.mp3" id="8_2a4im"]
+[ext_resource type="AudioStream" uid="uid://dyonxb3mu0txu" path="res://assets/sounds/dock3.wav" id="9_jx7x3"]
+[ext_resource type="AudioStream" uid="uid://ci8xwubj85pr2" path="res://assets/sounds/bach_compressed.mp3" id="10_8nf3x"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a08xs"]
 texture = ExtResource("1_7at63")
@@ -44,3 +49,18 @@ position = Vector2(701, 481)
 texture = ExtResource("4_js3uj")
 
 [node name="HUD" parent="." instance=ExtResource("3_vxlsc")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_olsjb")
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_co3w3")
+
+[node name="AudioStreamPlayer3" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_2a4im")
+
+[node name="AudioStreamPlayer4" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_jx7x3")
+
+[node name="GameMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_8nf3x")
