@@ -146,7 +146,6 @@ func new_game():
 	$HUD.get_node("ContinueButton").release_focus()
 	
 	closed_board.visible = false
-	
 	# Se for um novo jogo (não continuação), resetamos tudo
 	if not is_continue_enabled:
 		stage = 1
@@ -867,12 +866,12 @@ func calculate_score():
 	
 	# Atualiza o score
 	print_debug(score_increment)
-	for i in range(score_increment/5):
-		score += 5
+	for i in range(score_increment/10):
+		score += 10
 		#scoreSound.play()
 		moveSound.play()
 		$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
-		await get_tree().create_timer(0.0003).timeout
+		await get_tree().create_timer(0.003).timeout
 		
 	#score += score_increment
 	#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
