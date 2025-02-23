@@ -102,6 +102,9 @@ const REWARD : int = 100
 var game_running : bool
 var pick_or_create_piece_enabled : bool = true
 var is_continue_enabled : bool = false
+var isMusicPaused : bool = false
+var isMusicSilenced : bool = false
+var playbackPosition = 0.0
 
 #tilemap variables
 var tile_id : int = 0
@@ -123,6 +126,9 @@ var special_positions := []
 @onready var rotateSound : AudioStreamPlayer = $AudioStreamPlayer2
 @onready var dockSound : AudioStreamPlayer = $AudioStreamPlayer3
 @onready var dockSound2 : AudioStreamPlayer = $AudioStreamPlayer4
+@onready var gameOverSound : AudioStreamPlayer = $GameOverSound
+@onready var levelCompletedSound : AudioStreamPlayer = $LevelCompletedSound
+@onready var scoreSound : AudioStreamPlayer = $ScoreSound
 
 @onready var gameMusic : AudioStreamPlayer = $GameMusic
 
@@ -145,7 +151,11 @@ func new_game():
 	if not is_continue_enabled:
 		stage = 1
 		speed = 1.0  # Reset da velocidade apenas no novo jogo
-		gameMusic.play()
+		if not isMusicSilenced:
+			gameMusic.stop()	
+			gameMusic.play()			
+		else: 
+			gameMusic.stop
 	
 	# Reset de variáveis para ambos os casos
 	score = 0
@@ -224,7 +234,13 @@ func _process(delta):
 		# Rotação sempre permitida
 		if Input.is_action_just_pressed("rotate_piece"):
 			rotateSound.play()
-			rotate_piece()        
+			rotate_piece()       
+		
+		if Input.is_action_just_pressed("toggle_music"):  
+			if isMusicSilenced:
+				unsilence_music()  # Desilencia se a música estiver silenciada
+			else:
+				silence_music()
 		
 		# Aplicar movimentos manuais
 		for i in range(steps.size()):
@@ -790,7 +806,7 @@ func advance_stage():
 	red_tiles = 0
 	special_positions = []
 	create_fixed_center_piece()
-	await get_tree().create_timer(2).timeout
+	#await get_tree().create_timer(2).timeout
 	game_running = true
 	pick_or_create_piece_enabled = true
 	updateHudLabels()
@@ -813,9 +829,10 @@ func update_panel_colors(min_blue, max_red):
 func show_level_completed():
 	var level_label = $HUD.get_node("LevelCompletedLabel")
 	level_label.text = "LEVEL COMPLETED!"
+	levelCompletedSound.play()
 	game_running = false
 	level_label.show()
-	await get_tree().create_timer(3).timeout
+	await get_tree().create_timer(2).timeout
 	#level_label.hide()
 	#await get_tree().create_timer(1).timeout  # Espera 1 segundo antes do próximo texto
 	
@@ -849,15 +866,23 @@ func calculate_score():
 			red_bonus_factor.text = ""
 	
 	# Atualiza o score
-	score += score_increment
+	print_debug(score_increment)
+	for i in range(score_increment/5):
+		score += 5
+		#scoreSound.play()
+		moveSound.play()
+		$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+		await get_tree().create_timer(0.0003).timeout
+		
+	#score += score_increment
 	#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
 	
 	if score >= hi_score:
 		hi_score = score
 	
-	await get_tree().create_timer(2).timeout
-	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
-	await get_tree().create_timer(1).timeout
+	#await get_tree().create_timer(2).timeout
+	#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+	#await get_tree().create_timer(1).timeout
 	
 	blue_multiplication_factor.hide()
 	red_bonus_factor.hide()
@@ -873,6 +898,11 @@ func clear_panel():
 
 func game_over():
 	closed_board.visible = true
+
+	if not isMusicSilenced:
+		toggle_music()
+
+	gameOverSound.play()
 	$HUD.get_node("GameOverLabel").show()
 	$HUD.get_node("ContinueButton").show()
 	
@@ -883,8 +913,38 @@ func game_over():
 	
 func continue_game():
 	is_continue_enabled = true  # Ativa a flag de continuação
+	
+	if not isMusicSilenced:  # Checa se a música estava silenciada
+		unsilence_music()
+	
 	new_game()  # Chama new_game() com a flag ativada
+	
+		
+func toggle_music():
+	if isMusicSilenced:
+		if not isMusicPaused:
+			playbackPosition = gameMusic.get_playback_position()  # Armazena a posição antes de parar
+			gameMusic.stop()  # Para a música
+			isMusicPaused = true
+		return  # Se estiver silenciado, não faz mais nada
 
+	if isMusicPaused:
+		gameMusic.play()  # Retoma a música
+		gameMusic.seek(playbackPosition)  # Retorna à posição de reprodução
+		isMusicPaused = false
+	else:
+		playbackPosition = gameMusic.get_playback_position()  # Armazena a posição atual
+		gameMusic.stop()  # Para a música
+		isMusicPaused = true
+		
+func silence_music():
+	isMusicSilenced = true
+	toggle_music()  
+
+func unsilence_music():
+	isMusicSilenced = false
+	toggle_music() 
+			
 func check_rows():
 	var row : int = ROWS
 	while row > 0:
