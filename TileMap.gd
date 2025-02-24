@@ -105,6 +105,7 @@ var is_continue_enabled : bool = false
 var isMusicPaused : bool = false
 var isMusicSilenced : bool = false
 var playbackPosition = 0.0
+var is_paused : bool = true
 
 #tilemap variables
 var tile_id : int = 0
@@ -121,6 +122,9 @@ var special_positions := []
 @onready var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var panel_blue_node = $HUD.get_node("BlueTilesPanel")
 @onready var closed_board = get_node("Sprite2D2")
+@onready var title = get_node("SpriteTitle")
+@onready var sprite_press_new = get_node("SpritePressNewGame")
+@onready var sprite_logo = get_node("SpriteLogo")
 #var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var moveSound : AudioStreamPlayer = $AudioStreamPlayer
 @onready var rotateSound : AudioStreamPlayer = $AudioStreamPlayer2
@@ -146,10 +150,15 @@ func new_game():
 	$HUD.get_node("ContinueButton").release_focus()
 	
 	closed_board.visible = false
+	title.visible = false
+	sprite_press_new.visible = false
+	sprite_logo.visible = false
 	# Se for um novo jogo (não continuação), resetamos tudo
 	if not is_continue_enabled:
 		stage = 1
 		speed = 1.0  # Reset da velocidade apenas no novo jogo
+		playbackPosition = 0.0
+		gameMusic.seek(playbackPosition)
 		if not isMusicSilenced:
 			gameMusic.stop()	
 			gameMusic.play()			
@@ -240,6 +249,9 @@ func _process(delta):
 				unsilence_music()  # Desilencia se a música estiver silenciada
 			else:
 				silence_music()
+		
+		#if Input.is_action_just_pressed("pause"):
+			#toggle_pause()
 		
 		# Aplicar movimentos manuais
 		for i in range(steps.size()):
@@ -865,7 +877,6 @@ func calculate_score():
 			red_bonus_factor.text = ""
 	
 	# Atualiza o score
-	print_debug(score_increment)
 	for i in range(score_increment/10):
 		score += 10
 		#scoreSound.play()
@@ -873,15 +884,8 @@ func calculate_score():
 		$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
 		await get_tree().create_timer(0.003).timeout
 		
-	#score += score_increment
-	#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
-	
 	if score >= hi_score:
 		hi_score = score
-	
-	#await get_tree().create_timer(2).timeout
-	#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
-	#await get_tree().create_timer(1).timeout
 	
 	blue_multiplication_factor.hide()
 	red_bonus_factor.hide()
@@ -943,6 +947,15 @@ func silence_music():
 func unsilence_music():
 	isMusicSilenced = false
 	toggle_music() 
+	
+func _unhandled_input(event):
+	if Input.is_action_just_pressed("pause"):
+		toggle_pause()
+		toggle_music()
+	
+func toggle_pause():
+	is_paused = not is_paused
+	game_running = is_paused
 			
 func check_rows():
 	var row : int = ROWS
