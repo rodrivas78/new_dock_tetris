@@ -1,3 +1,4 @@
-res://scenes/hud.tscn
 res://scenes/tile_map.tscn
 res://TileMap.gd
+res://scenes/hud.tscn
+res://scenes/SpritePressNewGame.gd

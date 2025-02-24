@@ -1,15 +1,22 @@
-[gd_scene load_steps=13 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=20 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
 [ext_resource type="PackedScene" uid="uid://psjnbhu2tahx" path="res://scenes/hud.tscn" id="3_vxlsc"]
 [ext_resource type="Texture2D" uid="uid://bli6phsx3enbj" path="res://assets/bg4.jpg" id="4_birf1"]
 [ext_resource type="Texture2D" uid="uid://dh4ojr6jvlmry" path="res://assets/bg3.jpg" id="4_js3uj"]
+[ext_resource type="Texture2D" uid="uid://ixqcdhxq3c6l" path="res://assets/Orbit_Blocks2.png" id="5_dvs50"]
+[ext_resource type="Texture2D" uid="uid://cud3816n08nds" path="res://assets/press_new_game.png" id="6_2h7sj"]
 [ext_resource type="AudioStream" uid="uid://b6nyegslw43b8" path="res://assets/sounds/SFX4.mp3" id="6_olsjb"]
+[ext_resource type="Texture2D" uid="uid://b2vo6cul26lq8" path="res://assets/orb_logo.png" id="7_4tr54"]
 [ext_resource type="AudioStream" uid="uid://cpwuujhfog3av" path="res://assets/sounds/SFX6.mp3" id="7_co3w3"]
+[ext_resource type="Script" path="res://scenes/SpritePressNewGame.gd" id="7_gu0fs"]
 [ext_resource type="AudioStream" uid="uid://kr12lku34mck" path="res://assets/sounds/SFX8.mp3" id="8_2a4im"]
 [ext_resource type="AudioStream" uid="uid://dyonxb3mu0txu" path="res://assets/sounds/dock3.wav" id="9_jx7x3"]
 [ext_resource type="AudioStream" uid="uid://ci8xwubj85pr2" path="res://assets/sounds/bach_compressed.mp3" id="10_8nf3x"]
+[ext_resource type="AudioStream" uid="uid://bkse1mu4h8xhq" path="res://assets/sounds/gameOver2.mp3" id="10_d5s87"]
+[ext_resource type="AudioStream" uid="uid://4hbgf88wubpl" path="res://assets/sounds/level_completed.mp3" id="11_gkleg"]
+[ext_resource type="AudioStream" uid="uid://ckn2c8xnbvgl5" path="res://assets/sounds/increase_score.wav" id="12_5juw5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a08xs"]
 texture = ExtResource("1_7at63")
@@ -48,6 +55,22 @@ z_index = -1
 position = Vector2(701, 481)
 texture = ExtResource("4_js3uj")
 
+[node name="SpriteTitle" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(505, 286)
+texture = ExtResource("5_dvs50")
+
+[node name="SpritePressNewGame" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(509, 668)
+texture = ExtResource("6_2h7sj")
+script = ExtResource("7_gu0fs")
+
+[node name="SpriteLogo" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(232, 859)
+texture = ExtResource("7_4tr54")
+
 [node name="HUD" parent="." instance=ExtResource("3_vxlsc")]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
@@ -61,6 +84,17 @@ stream = ExtResource("8_2a4im")
 
 [node name="AudioStreamPlayer4" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("9_jx7x3")
+
+[node name="GameOverSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_d5s87")
+volume_db = -7.496
+
+[node name="LevelCompletedSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_gkleg")
+
+[node name="ScoreSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_5juw5")
+pitch_scale = 0.82
 
 [node name="GameMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_8nf3x")
