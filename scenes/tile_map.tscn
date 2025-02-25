@@ -10,13 +10,13 @@
 [ext_resource type="AudioStream" uid="uid://b6nyegslw43b8" path="res://assets/sounds/SFX4.mp3" id="6_olsjb"]
 [ext_resource type="Texture2D" uid="uid://b2vo6cul26lq8" path="res://assets/orb_logo.png" id="7_4tr54"]
 [ext_resource type="AudioStream" uid="uid://cpwuujhfog3av" path="res://assets/sounds/SFX6.mp3" id="7_co3w3"]
-[ext_resource type="Script" path="res://scenes/SpritePressNewGame.gd" id="7_gu0fs"]
 [ext_resource type="AudioStream" uid="uid://kr12lku34mck" path="res://assets/sounds/SFX8.mp3" id="8_2a4im"]
 [ext_resource type="AudioStream" uid="uid://dyonxb3mu0txu" path="res://assets/sounds/dock3.wav" id="9_jx7x3"]
 [ext_resource type="AudioStream" uid="uid://ci8xwubj85pr2" path="res://assets/sounds/bach_compressed.mp3" id="10_8nf3x"]
 [ext_resource type="AudioStream" uid="uid://bkse1mu4h8xhq" path="res://assets/sounds/gameOver2.mp3" id="10_d5s87"]
 [ext_resource type="AudioStream" uid="uid://4hbgf88wubpl" path="res://assets/sounds/level_completed.mp3" id="11_gkleg"]
 [ext_resource type="AudioStream" uid="uid://ckn2c8xnbvgl5" path="res://assets/sounds/increase_score.wav" id="12_5juw5"]
+[ext_resource type="AudioStream" uid="uid://etf4rebjnbr7" path="res://assets/sounds/TitleSong.mp3" id="17_7wqmu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a08xs"]
 texture = ExtResource("1_7at63")
@@ -62,13 +62,12 @@ texture = ExtResource("5_dvs50")
 
 [node name="SpritePressNewGame" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(509, 668)
+position = Vector2(509, 661)
 texture = ExtResource("6_2h7sj")
-script = ExtResource("7_gu0fs")
 
 [node name="SpriteLogo" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(232, 859)
+position = Vector2(512, 859)
 texture = ExtResource("7_4tr54")
 
 [node name="HUD" parent="." instance=ExtResource("3_vxlsc")]
@@ -98,3 +97,8 @@ pitch_scale = 0.82
 
 [node name="GameMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_8nf3x")
+
+[node name="GameTitleMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_7wqmu")
+volume_db = -2.81
+autoplay = true

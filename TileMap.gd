@@ -83,7 +83,7 @@ const steps_req : int = 50
 const start_pos := Vector2i(5, 1)
 var cur_pos : Vector2i
 var speed : float
-const ACCEL : float = 0.25
+const ACCEL : float = 0.10
 
 #game piece variables
 var piece_type
@@ -106,6 +106,7 @@ var isMusicPaused : bool = false
 var isMusicSilenced : bool = false
 var playbackPosition = 0.0
 var is_paused : bool = true
+var auto_step = 0 
 
 #tilemap variables
 var tile_id : int = 0
@@ -133,6 +134,7 @@ var special_positions := []
 @onready var gameOverSound : AudioStreamPlayer = $GameOverSound
 @onready var levelCompletedSound : AudioStreamPlayer = $LevelCompletedSound
 @onready var scoreSound : AudioStreamPlayer = $ScoreSound
+@onready var gameTitleMusic : AudioStreamPlayer = $GameTitleMusic
 
 @onready var gameMusic : AudioStreamPlayer = $GameMusic
 
@@ -144,6 +146,7 @@ func _ready():
 	
 func new_game():
 	# Reset de variáveis dependendo se é um "continue" ou um novo jogo
+	gameTitleMusic.stop()
 	panel_red_node.change_color(Color(0,1,0)) 
 	panel_blue_node.change_color(Color(1,0,0)) 
 	$HUD.get_node("StartButton").release_focus()
@@ -259,12 +262,12 @@ func _process(delta):
 				move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
 				steps[i] = 0
 				#moveSound.play()
-
+		 
 		# Movimento automático na direção oposta ao lado de surgimento
-		steps[2] += speed  # Incrementamos o contador para o movimento automático
-		if steps[2] > steps_req:
+		auto_step += speed
+		if auto_step > steps_req:
 			move_piece(auto_move_direction)  # Movimento automático
-			steps[2] = 0
+			auto_step = 0  # Resetar apenas o movimento automático
 			
 
 func pick_piece():
@@ -768,6 +771,7 @@ func update_adjacent_tiles():
 	piece_count += 1
 	
 	check_stage_conditions()
+	
 
 # Definição das condições para cada fase
 var stage_conditions = {
@@ -818,6 +822,7 @@ func advance_stage():
 	special_positions = []
 	create_fixed_center_piece()
 	#await get_tree().create_timer(2).timeout
+	speed += ACCEL
 	game_running = true
 	pick_or_create_piece_enabled = true
 	updateHudLabels()
