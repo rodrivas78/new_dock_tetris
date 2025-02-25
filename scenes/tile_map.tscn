@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=20 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
@@ -16,6 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://bkse1mu4h8xhq" path="res://assets/sounds/gameOver2.mp3" id="10_d5s87"]
 [ext_resource type="AudioStream" uid="uid://4hbgf88wubpl" path="res://assets/sounds/level_completed.mp3" id="11_gkleg"]
 [ext_resource type="AudioStream" uid="uid://ckn2c8xnbvgl5" path="res://assets/sounds/increase_score.wav" id="12_5juw5"]
+[ext_resource type="AudioStream" uid="uid://etf4rebjnbr7" path="res://assets/sounds/TitleSong.mp3" id="17_7wqmu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a08xs"]
 texture = ExtResource("1_7at63")
@@ -96,3 +97,8 @@ pitch_scale = 0.82
 
 [node name="GameMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_8nf3x")
+
+[node name="GameTitleMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_7wqmu")
+volume_db = -2.81
+autoplay = true
