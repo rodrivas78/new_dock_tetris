@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=21 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cud3816n08nds" path="res://assets/press_new_game.png" id="6_2h7sj"]
 [ext_resource type="AudioStream" uid="uid://b6nyegslw43b8" path="res://assets/sounds/SFX4.mp3" id="6_olsjb"]
 [ext_resource type="Texture2D" uid="uid://b2vo6cul26lq8" path="res://assets/orb_logo.png" id="7_4tr54"]
+[ext_resource type="Script" path="res://scenes/SpritePressNewGame.gd" id="7_ck7q3"]
 [ext_resource type="AudioStream" uid="uid://cpwuujhfog3av" path="res://assets/sounds/SFX6.mp3" id="7_co3w3"]
 [ext_resource type="AudioStream" uid="uid://kr12lku34mck" path="res://assets/sounds/SFX8.mp3" id="8_2a4im"]
 [ext_resource type="AudioStream" uid="uid://dyonxb3mu0txu" path="res://assets/sounds/dock3.wav" id="9_jx7x3"]
@@ -64,6 +65,7 @@ texture = ExtResource("5_dvs50")
 z_index = -1
 position = Vector2(509, 661)
 texture = ExtResource("6_2h7sj")
+script = ExtResource("7_ck7q3")
 
 [node name="SpriteLogo" type="Sprite2D" parent="."]
 z_index = -1

@@ -147,6 +147,7 @@ func _ready():
 func new_game():
 	# Reset de variáveis dependendo se é um "continue" ou um novo jogo
 	gameTitleMusic.stop()
+	sprite_press_new.disable_blink()
 	panel_red_node.change_color(Color(0,1,0)) 
 	panel_blue_node.change_color(Color(1,0,0)) 
 	$HUD.get_node("StartButton").release_focus()
