@@ -120,12 +120,15 @@ var active_layer : int = 1
 #store special positions
 var special_positions := []
 
+@onready var start_button = $HUD.get_node("StartButton")
 @onready var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var panel_blue_node = $HUD.get_node("BlueTilesPanel")
 @onready var closed_board = get_node("Sprite2D2")
 @onready var title = get_node("SpriteTitle")
 @onready var sprite_press_new = get_node("SpritePressNewGame")
 @onready var sprite_logo = get_node("SpriteLogo")
+@onready var sprite_bg_win = get_node("SpriteWinScreen")
+@onready var sprite_you_won = get_node("SpriteYouWon")
 #var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var moveSound : AudioStreamPlayer = $AudioStreamPlayer
 @onready var rotateSound : AudioStreamPlayer = $AudioStreamPlayer2
@@ -135,6 +138,7 @@ var special_positions := []
 @onready var levelCompletedSound : AudioStreamPlayer = $LevelCompletedSound
 @onready var scoreSound : AudioStreamPlayer = $ScoreSound
 @onready var gameTitleMusic : AudioStreamPlayer = $GameTitleMusic
+@onready var gameWinMusic : AudioStreamPlayer = $GameWinMusic
 
 @onready var gameMusic : AudioStreamPlayer = $GameMusic
 
@@ -821,13 +825,27 @@ func advance_stage():
 	blue_tiles = 0
 	red_tiles = 0
 	special_positions = []
-	create_fixed_center_piece()
+	#create_fixed_center_piece()
 	#await get_tree().create_timer(2).timeout
 	speed += ACCEL
 	game_running = true
 	pick_or_create_piece_enabled = true
 	updateHudLabels()
 	check_stage_conditions()
+	
+	if stage >= 2:
+	#implementa transição / music fadeout (bach)
+		game_running = false
+		gameMusic.stop() 
+		gameWinMusic.play()
+		start_button.visible = false
+		closed_board.visible = true
+		sprite_bg_win.visible = true
+		sprite_you_won.visible = true
+		clear_panel()
+	else:
+		create_fixed_center_piece()
+		
 					
 func update_panel_colors(min_blue, max_red):
 	# Atualiza a cor do painel vermelho
