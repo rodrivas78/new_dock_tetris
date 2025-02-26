@@ -1,27 +1,33 @@
 extends Sprite2D
 
-# Intervalo de tempo para piscar (em segundos)
-var blink_interval = 1.0  
-
-# Timer para controlar o piscar
 var blink_timer: Timer
+var is_visible_state = true
+var can_blink = true  # Esta variável permite ou impede o piscar
 
 func _ready():
-	# Cria o Timer
 	blink_timer = Timer.new()
-	add_child(blink_timer)  # Adiciona o Timer como filho do nó atual
-	
-	# Configura o Timer
-	blink_timer.wait_time = blink_interval
-	blink_timer.autostart = true  # Começa automaticamente
-	blink_timer.one_shot = false  # Mantém o Timer repetindo
-	blink_timer.timeout.connect(_on_blink_timeout)  # Conecta o evento de timeout do Timer
-	
-	# Faz o sprite começar visível
-	visible = true
+	blink_timer.one_shot = true
+	blink_timer.timeout.connect(_on_blink_timeout)
+	add_child(blink_timer)
 
-# Função chamada toda vez que o Timer dispara
+	visible = true
+	blink_timer.start(1.8)
+
 func _on_blink_timeout():
-	# Alterna a visibilidade do sprite
-	visible = not visible
+	if can_blink:  # Só alterna visibilidade se puder piscar
+		is_visible_state = not is_visible_state
+		visible = is_visible_state
+		
+		var next_time = 1.8 if is_visible_state else 0.3
+		blink_timer.start(next_time)
+
+#  Função para impedir que o sprite pisque e mantê-lo invisível
+func disable_blink():
+	can_blink = false
+	visible = false  # Mantém invisível
+
+#  Função para permitir que o sprite volte a piscar
+func enable_blink():
+	can_blink = true
+	blink_timer.start(2.0)  # Reinicia o Timer
 
