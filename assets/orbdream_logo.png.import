@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckvnx6x8uv00i"
-path="res://.godot/imported/you_won.png-84c91ffd5d93f151e3757e75ddfa46cc.ctex"
+uid="uid://b6ietw3lu6pmi"
+path="res://.godot/imported/orbdream_logo.png-a176cbdd2358088769acddaca36a87df.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/you_won.png"
-dest_files=["res://.godot/imported/you_won.png-84c91ffd5d93f151e3757e75ddfa46cc.ctex"]
+source_file="res://assets/orbdream_logo.png"
+dest_files=["res://.godot/imported/orbdream_logo.png-a176cbdd2358088769acddaca36a87df.ctex"]
 
 [params]
 
