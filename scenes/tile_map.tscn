@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=28 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
@@ -6,18 +6,25 @@
 [ext_resource type="Texture2D" uid="uid://bli6phsx3enbj" path="res://assets/bg4.jpg" id="4_birf1"]
 [ext_resource type="Texture2D" uid="uid://dh4ojr6jvlmry" path="res://assets/bg3.jpg" id="4_js3uj"]
 [ext_resource type="Texture2D" uid="uid://ixqcdhxq3c6l" path="res://assets/Orbit_Blocks2.png" id="5_dvs50"]
+[ext_resource type="Texture2D" uid="uid://dtu10o0it276o" path="res://assets/3d_sunset_resized.jpg" id="5_u4xdp"]
 [ext_resource type="Texture2D" uid="uid://cud3816n08nds" path="res://assets/press_new_game.png" id="6_2h7sj"]
 [ext_resource type="AudioStream" uid="uid://b6nyegslw43b8" path="res://assets/sounds/SFX4.mp3" id="6_olsjb"]
 [ext_resource type="Texture2D" uid="uid://b2vo6cul26lq8" path="res://assets/orb_logo.png" id="7_4tr54"]
 [ext_resource type="Script" path="res://scenes/SpritePressNewGame.gd" id="7_ck7q3"]
 [ext_resource type="AudioStream" uid="uid://cpwuujhfog3av" path="res://assets/sounds/SFX6.mp3" id="7_co3w3"]
+[ext_resource type="Texture2D" uid="uid://byin1sjirpr4x" path="res://assets/you_won3.png" id="7_x45pm"]
 [ext_resource type="AudioStream" uid="uid://kr12lku34mck" path="res://assets/sounds/SFX8.mp3" id="8_2a4im"]
 [ext_resource type="AudioStream" uid="uid://dyonxb3mu0txu" path="res://assets/sounds/dock3.wav" id="9_jx7x3"]
 [ext_resource type="AudioStream" uid="uid://ci8xwubj85pr2" path="res://assets/sounds/bach_compressed.mp3" id="10_8nf3x"]
 [ext_resource type="AudioStream" uid="uid://bkse1mu4h8xhq" path="res://assets/sounds/gameOver2.mp3" id="10_d5s87"]
+[ext_resource type="Texture2D" uid="uid://cnb8oaxgvaqgx" path="res://assets/credit_1.png" id="11_761jr"]
+[ext_resource type="Texture2D" uid="uid://1cpwc4j5q5cj" path="res://assets/OrbDream_.png" id="11_ax5x1"]
 [ext_resource type="AudioStream" uid="uid://4hbgf88wubpl" path="res://assets/sounds/level_completed.mp3" id="11_gkleg"]
 [ext_resource type="AudioStream" uid="uid://ckn2c8xnbvgl5" path="res://assets/sounds/increase_score.wav" id="12_5juw5"]
+[ext_resource type="Texture2D" uid="uid://dtawvwdyrep8m" path="res://assets/credit_2.png" id="12_qdqdf"]
 [ext_resource type="AudioStream" uid="uid://etf4rebjnbr7" path="res://assets/sounds/TitleSong.mp3" id="17_7wqmu"]
+[ext_resource type="AudioStream" uid="uid://eg2goq2vcvj7" path="res://assets/sounds/you_won.mp3" id="20_ekctx"]
+[ext_resource type="AudioStream" uid="uid://cg3fdj1w7br2u" path="res://assets/sounds/level_up.mp3" id="23_mi8wk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a08xs"]
 texture = ExtResource("1_7at63")
@@ -56,10 +63,21 @@ z_index = -1
 position = Vector2(701, 481)
 texture = ExtResource("4_js3uj")
 
+[node name="SpriteWinScreen" type="Sprite2D" parent="."]
+visible = false
+z_index = -1
+position = Vector2(513, 479)
+texture = ExtResource("5_u4xdp")
+
 [node name="SpriteTitle" type="Sprite2D" parent="."]
 z_index = -1
 position = Vector2(505, 286)
 texture = ExtResource("5_dvs50")
+
+[node name="SpriteYouWon" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(505, 1016)
+texture = ExtResource("7_x45pm")
 
 [node name="SpritePressNewGame" type="Sprite2D" parent="."]
 z_index = -1
@@ -71,6 +89,23 @@ script = ExtResource("7_ck7q3")
 z_index = -1
 position = Vector2(512, 859)
 texture = ExtResource("7_4tr54")
+
+[node name="SpriteLogo2" type="Sprite2D" parent="."]
+visible = false
+z_index = -1
+position = Vector2(820, 854)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("11_ax5x1")
+
+[node name="SpriteCredits" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(512, 1056)
+texture = ExtResource("11_761jr")
+
+[node name="SpriteCredits2" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(512, 1107)
+texture = ExtResource("12_qdqdf")
 
 [node name="HUD" parent="." instance=ExtResource("3_vxlsc")]
 
@@ -104,3 +139,10 @@ stream = ExtResource("10_8nf3x")
 stream = ExtResource("17_7wqmu")
 volume_db = -2.81
 autoplay = true
+
+[node name="GameWinMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("20_ekctx")
+volume_db = -0.937
+
+[node name="GameWinSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("23_mi8wk")

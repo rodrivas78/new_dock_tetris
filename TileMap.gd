@@ -107,6 +107,7 @@ var isMusicSilenced : bool = false
 var playbackPosition = 0.0
 var is_paused : bool = true
 var auto_step = 0 
+var end_of_the_game : bool = false
 
 #tilemap variables
 var tile_id : int = 0
@@ -120,12 +121,20 @@ var active_layer : int = 1
 #store special positions
 var special_positions := []
 
+@onready var tween = $Tween
+
+@onready var start_button = $HUD.get_node("StartButton")
 @onready var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var panel_blue_node = $HUD.get_node("BlueTilesPanel")
 @onready var closed_board = get_node("Sprite2D2")
 @onready var title = get_node("SpriteTitle")
 @onready var sprite_press_new = get_node("SpritePressNewGame")
 @onready var sprite_logo = get_node("SpriteLogo")
+@onready var orb_logo = get_node("SpriteLogo2")
+@onready var sprite_bg_win = get_node("SpriteWinScreen")
+@onready var sprite_you_won = get_node("SpriteYouWon")
+@onready var sprite_credits_one = get_node("SpriteCredits")
+@onready var sprite_credits_two = get_node("SpriteCredits2")
 #var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var moveSound : AudioStreamPlayer = $AudioStreamPlayer
 @onready var rotateSound : AudioStreamPlayer = $AudioStreamPlayer2
@@ -135,6 +144,8 @@ var special_positions := []
 @onready var levelCompletedSound : AudioStreamPlayer = $LevelCompletedSound
 @onready var scoreSound : AudioStreamPlayer = $ScoreSound
 @onready var gameTitleMusic : AudioStreamPlayer = $GameTitleMusic
+@onready var gameWinMusic : AudioStreamPlayer = $GameWinMusic
+@onready var gameWinSound : AudioStreamPlayer = $GameWinSound
 
 @onready var gameMusic : AudioStreamPlayer = $GameMusic
 
@@ -256,20 +267,24 @@ func _process(delta):
 		
 		#if Input.is_action_just_pressed("pause"):
 			#toggle_pause()
-		
-		# Aplicar movimentos manuais
-		for i in range(steps.size()):
-			if steps[i] > steps_req:
-				move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
-				steps[i] = 0
-				#moveSound.play()
-		 
-		# Movimento automático na direção oposta ao lado de surgimento
-		auto_step += speed
-		if auto_step > steps_req:
-			move_piece(auto_move_direction)  # Movimento automático
-			auto_step = 0  # Resetar apenas o movimento automático
+		if (end_of_the_game):
+			set_music_fade_out()
+	
+		else:
+			# Aplicar movimentos manuais
+			for i in range(steps.size()):
+				if steps[i] > steps_req:
+					move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
+					steps[i] = 0
+					#moveSound.play()
+			 
+			# Movimento automático na direção oposta ao lado de surgimento
+			auto_step += speed
+			if auto_step > steps_req:
+				move_piece(auto_move_direction)  # Movimento automático
+				auto_step = 0  # Resetar apenas o movimento automático
 			
+				
 
 func pick_piece():
 	var piece
@@ -821,13 +836,40 @@ func advance_stage():
 	blue_tiles = 0
 	red_tiles = 0
 	special_positions = []
-	create_fixed_center_piece()
+	#create_fixed_center_piece()
 	#await get_tree().create_timer(2).timeout
 	speed += ACCEL
 	game_running = true
 	pick_or_create_piece_enabled = true
 	updateHudLabels()
 	check_stage_conditions()
+	
+	if stage >= 2:
+	#implementa transição / music fadeout (bach)
+		#set_music_fade_out()
+		#game_running = false
+		clear_panel()
+		end_of_the_game = true 
+		await get_tree().create_timer(3).timeout
+		show_victory()
+		gameWinSound.play()
+		await get_tree().create_timer(4).timeout
+		#gameMusic.stop() 
+		gameWinMusic.play()
+		start_button.visible = false
+		closed_board.visible = true
+		sprite_bg_win.visible = true
+		await get_tree().create_timer(6).timeout
+		show_credits_one()
+		await get_tree().create_timer(14).timeout
+		show_credits_two()
+		await get_tree().create_timer(14).timeout
+		fade_in_orb_logo()
+		#sprite_you_won.visible = true
+		
+	else:
+		create_fixed_center_piece()
+		s
 					
 func update_panel_colors(min_blue, max_red):
 	# Atualiza a cor do painel vermelho
@@ -1009,3 +1051,36 @@ func updateHudLabels():
 	$HUD.get_node("BlueTilesLabel").text = "= " + str(blue_tiles)
 	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
 	$HUD.get_node("HiScoreLabel").text = "HI-SCORE: " + str(hi_score)
+
+func set_music_fade_out() -> void:
+	gameMusic.set_volume_db(gameMusic.volume_db - 0.3)
+	if gameMusic.volume_db <= -80:
+		gameMusic.stop()
+
+
+func show_victory():
+	sprite_you_won.visible = true  # Torna o sprite visível
+	
+	var start_position = sprite_you_won.position
+	var target_position = Vector2(start_position.x, get_viewport_rect().size.y * 0.2)  # 80% da tela
+	
+	var tween = create_tween()  # Cria um tween no Godot 4
+	tween.tween_property(sprite_you_won, "position", target_position, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func show_credits_one():
+	sprite_credits_one.visible = true  
+	var target_position = Vector2(sprite_credits_one.position.x, get_viewport_rect().size.y * 0.42)  
+	var tween = create_tween()  
+	tween.tween_property(sprite_credits_one, "position", target_position, 14.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+	
+func show_credits_two():
+	sprite_credits_two.visible = true  
+	var target_position = Vector2(sprite_credits_two.position.x, get_viewport_rect().size.y * 0.68)  
+	var tween = create_tween()  
+	tween.tween_property(sprite_credits_two, "position", target_position, 14.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+
+func fade_in_orb_logo():
+	orb_logo.visible = true
+	orb_logo.modulate.a = 0.0  # Começa completamente invisível
+	var tween = create_tween()
+	tween.tween_property(orb_logo, "modulate:a", 1.0, 4.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
