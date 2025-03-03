@@ -83,7 +83,7 @@ const steps_req : int = 50
 const start_pos := Vector2i(5, 1)
 var cur_pos : Vector2i
 var speed : float
-const ACCEL : float = 0.10
+const ACCEL : float = 0.11
 
 #game piece variables
 var piece_type
@@ -135,6 +135,7 @@ var special_positions := []
 @onready var sprite_you_won = get_node("SpriteYouWon")
 @onready var sprite_credits_one = get_node("SpriteCredits")
 @onready var sprite_credits_two = get_node("SpriteCredits2")
+@onready var sprite_esc_to_return = get_node("SpriteEscToReturn")
 #var panel_red_node = $HUD.get_node("RedTilesPanel")
 @onready var moveSound : AudioStreamPlayer = $AudioStreamPlayer
 @onready var rotateSound : AudioStreamPlayer = $AudioStreamPlayer2
@@ -157,6 +158,7 @@ func _ready():
 	
 func new_game():
 	# Reset de variáveis dependendo se é um "continue" ou um novo jogo
+	end_of_the_game = false
 	gameTitleMusic.stop()
 	sprite_press_new.disable_blink()
 	panel_red_node.change_color(Color(0,1,0)) 
@@ -175,9 +177,11 @@ func new_game():
 		playbackPosition = 0.0
 		gameMusic.seek(playbackPosition)
 		if not isMusicSilenced:
-			gameMusic.stop()	
-			gameMusic.play()			
+			gameMusic.volume_db = 0.0
+			gameMusic.stop()
+			gameMusic.play()
 		else: 
+			gameMusic.volume_db = 0.0
 			gameMusic.stop
 	
 	# Reset de variáveis para ambos os casos
@@ -265,26 +269,24 @@ func _process(delta):
 			else:
 				silence_music()
 		
-		#if Input.is_action_just_pressed("pause"):
-			#toggle_pause()
-		if (end_of_the_game):
-			set_music_fade_out()
-	
-		else:
 			# Aplicar movimentos manuais
-			for i in range(steps.size()):
-				if steps[i] > steps_req:
-					move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
-					steps[i] = 0
-					#moveSound.play()
-			 
-			# Movimento automático na direção oposta ao lado de surgimento
-			auto_step += speed
-			if auto_step > steps_req:
-				move_piece(auto_move_direction)  # Movimento automático
-				auto_step = 0  # Resetar apenas o movimento automático
+		for i in range(steps.size()):
+			if steps[i] > steps_req:
+				move_piece(mov_directions[i])  # Aplica apenas os movimentos válidos
+				steps[i] = 0
+				#moveSound.play()
+		 
+		# Movimento automático na direção oposta ao lado de surgimento
+		auto_step += speed
+		if auto_step > steps_req:
+			move_piece(auto_move_direction)  # Movimento automático
+			auto_step = 0  # Resetar apenas o movimento automático
 			
-				
+	if end_of_the_game:
+		if Input.is_action_just_pressed("return_to_main_menu"):
+			go_to_splash_screen()
+			
+					
 
 func pick_piece():
 	var piece
@@ -846,25 +848,28 @@ func advance_stage():
 	
 	if stage >= 2:
 	#implementa transição / music fadeout (bach)
-		#set_music_fade_out()
-		#game_running = false
+		set_music_fade_out()
+		game_running = false
 		clear_panel()
 		end_of_the_game = true 
 		await get_tree().create_timer(3).timeout
 		show_victory()
 		gameWinSound.play()
 		await get_tree().create_timer(4).timeout
-		#gameMusic.stop() 
+		gameWinMusic.volume_db = 0.0
 		gameWinMusic.play()
 		start_button.visible = false
 		closed_board.visible = true
-		sprite_bg_win.visible = true
+		#sprite_bg_win.visible = true
+		show_win_background()
 		await get_tree().create_timer(6).timeout
 		show_credits_one()
 		await get_tree().create_timer(14).timeout
 		show_credits_two()
 		await get_tree().create_timer(14).timeout
 		fade_in_orb_logo()
+		await get_tree().create_timer(4).timeout
+		show_esc_to_return()
 		#sprite_you_won.visible = true
 		
 	else:
@@ -927,7 +932,6 @@ func calculate_score():
 	# Atualiza o score
 	for i in range(score_increment/10):
 		score += 10
-		#scoreSound.play()
 		moveSound.play()
 		$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
 		await get_tree().create_timer(0.003).timeout
@@ -998,8 +1002,11 @@ func unsilence_music():
 	
 func _unhandled_input(event):
 	if Input.is_action_just_pressed("pause"):
-		toggle_pause()
-		toggle_music()
+		print_debug(end_of_the_game)
+		if not end_of_the_game:
+			toggle_music()
+			toggle_pause()
+		
 	
 func toggle_pause():
 	is_paused = not is_paused
@@ -1052,11 +1059,15 @@ func updateHudLabels():
 	$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
 	$HUD.get_node("HiScoreLabel").text = "HI-SCORE: " + str(hi_score)
 
-func set_music_fade_out() -> void:
-	gameMusic.set_volume_db(gameMusic.volume_db - 0.3)
-	if gameMusic.volume_db <= -80:
-		gameMusic.stop()
 
+func set_music_fade_out():
+	var tween = create_tween()
+	tween.tween_property(gameMusic, "volume_db", -40.0, 2.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(stop_music)
+	
+func stop_music():
+	if gameMusic.volume_db <= -35.0:  # Verifica se o volume já está muito baixo
+		gameMusic.stop()
 
 func show_victory():
 	sprite_you_won.visible = true  # Torna o sprite visível
@@ -1066,6 +1077,12 @@ func show_victory():
 	
 	var tween = create_tween()  # Cria um tween no Godot 4
 	tween.tween_property(sprite_you_won, "position", target_position, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+func show_win_background():
+	sprite_bg_win.visible = true
+	sprite_bg_win.modulate.a = 0.0  # Começa completamente invisível
+	var tween = create_tween()
+	tween.tween_property(sprite_bg_win, "modulate:a", 1.0, 2.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
 
 func show_credits_one():
 	sprite_credits_one.visible = true  
@@ -1084,3 +1101,72 @@ func fade_in_orb_logo():
 	orb_logo.modulate.a = 0.0  # Começa completamente invisível
 	var tween = create_tween()
 	tween.tween_property(orb_logo, "modulate:a", 1.0, 4.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+
+func show_esc_to_return():
+	sprite_esc_to_return.visible = true
+	sprite_esc_to_return.modulate.a = 0.0  # Começa completamente invisível
+	var tween = create_tween()
+	tween.tween_property(sprite_esc_to_return, "modulate:a", 1.0, 4.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+	
+func go_to_splash_screen():
+	await set_win_music_fade_out()
+	sprite_esc_to_return.visible = false
+	orb_logo.visible = false
+	sprite_credits_one.visible = false
+	sprite_credits_two.visible = false
+	sprite_you_won.visible = false
+	start_button.visible = true
+	sprite_bg_win.visible = false
+	reset_credits_sprites_position()
+	#end_of_the_game = false
+	
+	gameTitleMusic.play()
+	title.visible = true
+	sprite_press_new.visible = true
+	sprite_press_new.enable_blink()
+	sprite_logo.visible = true
+	
+	#TODO 
+	#creditos devem retorar posicao inicial?
+
+func set_win_music_fade_out():
+	var tween = create_tween()
+	tween.tween_property(gameWinMusic, "volume_db", -40.0, 2.0).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(stop_win_music)
+	await get_tree().create_timer(2).timeout
+	
+func stop_win_music():
+	if gameMusic.volume_db <= -35.0:  # Verifica se o volume já está muito baixo
+		gameMusic.stop()
+
+func reset_credits_sprites_position():
+	sprite_you_won.position = Vector2(505, 1016)
+	sprite_credits_one.position = Vector2(512, 1056)
+	sprite_credits_two.position = Vector2(512, 1107)
+	
+var cancel_requested = false
+
+#func start_sequence():
+	#cancel_requested = false
+#
+	#await delay(6)
+	#if cancel_requested: return
+	#show_credits_one()
+#
+	#await delay(14)
+	#if cancel_requested: return
+	#show_credits_two()
+#
+	#await delay(14)
+	#if cancel_requested: return
+	#fade_in_orb_logo()
+#
+	#await delay(4)
+	#if cancel_requested: return
+	## Última ação (caso exista)
+#
+#func cancel_sequence():
+	#cancel_requested = true
+#
+#func delay(seconds: float):
+	#await get_tree().create_timer(seconds).timeout

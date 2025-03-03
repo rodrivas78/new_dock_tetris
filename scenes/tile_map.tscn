@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://v07im6ckn0y5"]
+[gd_scene load_steps=29 format=3 uid="uid://v07im6ckn0y5"]
 
 [ext_resource type="Texture2D" uid="uid://bwxneirljy70c" path="res://assets/tetrominoes.png" id="1_7at63"]
 [ext_resource type="Script" path="res://TileMap.gd" id="2_y6mwb"]
@@ -22,6 +22,7 @@
 [ext_resource type="AudioStream" uid="uid://4hbgf88wubpl" path="res://assets/sounds/level_completed.mp3" id="11_gkleg"]
 [ext_resource type="AudioStream" uid="uid://ckn2c8xnbvgl5" path="res://assets/sounds/increase_score.wav" id="12_5juw5"]
 [ext_resource type="Texture2D" uid="uid://dtawvwdyrep8m" path="res://assets/credit_2.png" id="12_qdqdf"]
+[ext_resource type="Texture2D" uid="uid://bpoiytnwj48tg" path="res://assets/esc_to_return.png" id="14_kmyva"]
 [ext_resource type="AudioStream" uid="uid://etf4rebjnbr7" path="res://assets/sounds/TitleSong.mp3" id="17_7wqmu"]
 [ext_resource type="AudioStream" uid="uid://eg2goq2vcvj7" path="res://assets/sounds/you_won.mp3" id="20_ekctx"]
 [ext_resource type="AudioStream" uid="uid://cg3fdj1w7br2u" path="res://assets/sounds/level_up.mp3" id="23_mi8wk"]
@@ -58,7 +59,6 @@ position = Vector2(701, 481)
 texture = ExtResource("4_birf1")
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
-visible = false
 z_index = -1
 position = Vector2(701, 481)
 texture = ExtResource("4_js3uj")
@@ -106,6 +106,13 @@ texture = ExtResource("11_761jr")
 z_index = -1
 position = Vector2(512, 1107)
 texture = ExtResource("12_qdqdf")
+
+[node name="SpriteEscToReturn" type="Sprite2D" parent="."]
+visible = false
+z_index = -1
+position = Vector2(329, 876)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("14_kmyva")
 
 [node name="HUD" parent="." instance=ExtResource("3_vxlsc")]
 
