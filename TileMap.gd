@@ -108,6 +108,7 @@ var playbackPosition = 0.0
 var is_paused : bool = true
 var auto_step = 0 
 var end_of_the_game : bool = false
+var cancel_requested : bool = false
 
 #tilemap variables
 var tile_id : int = 0
@@ -284,10 +285,9 @@ func _process(delta):
 			
 	if end_of_the_game:
 		if Input.is_action_just_pressed("return_to_main_menu"):
+			cancel_sequence()
 			go_to_splash_screen()
-			
 					
-
 func pick_piece():
 	var piece
 	if not shapes.is_empty():
@@ -846,8 +846,7 @@ func advance_stage():
 	updateHudLabels()
 	check_stage_conditions()
 	
-	if stage >= 2:
-	#implementa transição / music fadeout (bach)
+	if stage >= 15:
 		set_music_fade_out()
 		game_running = false
 		clear_panel()
@@ -862,15 +861,7 @@ func advance_stage():
 		closed_board.visible = true
 		#sprite_bg_win.visible = true
 		show_win_background()
-		await get_tree().create_timer(6).timeout
-		show_credits_one()
-		await get_tree().create_timer(14).timeout
-		show_credits_two()
-		await get_tree().create_timer(14).timeout
-		fade_in_orb_logo()
-		await get_tree().create_timer(4).timeout
-		show_esc_to_return()
-		#sprite_you_won.visible = true
+		start_sequence()
 		
 	else:
 		create_fixed_center_piece()
@@ -897,8 +888,6 @@ func show_level_completed():
 	game_running = false
 	level_label.show()
 	await get_tree().create_timer(2).timeout
-	#level_label.hide()
-	#await get_tree().create_timer(1).timeout  # Espera 1 segundo antes do próximo texto
 	
 func calculate_score():
 	var blue_multiplication_factor = $HUD.get_node("BlueMultiplicationFactor")
@@ -1002,7 +991,6 @@ func unsilence_music():
 	
 func _unhandled_input(event):
 	if Input.is_action_just_pressed("pause"):
-		print_debug(end_of_the_game)
 		if not end_of_the_game:
 			toggle_music()
 			toggle_pause()
@@ -1125,9 +1113,6 @@ func go_to_splash_screen():
 	sprite_press_new.visible = true
 	sprite_press_new.enable_blink()
 	sprite_logo.visible = true
-	
-	#TODO 
-	#creditos devem retorar posicao inicial?
 
 func set_win_music_fade_out():
 	var tween = create_tween()
@@ -1144,29 +1129,27 @@ func reset_credits_sprites_position():
 	sprite_credits_one.position = Vector2(512, 1056)
 	sprite_credits_two.position = Vector2(512, 1107)
 	
-var cancel_requested = false
+func start_sequence():
+	cancel_requested = false
 
-#func start_sequence():
-	#cancel_requested = false
-#
-	#await delay(6)
-	#if cancel_requested: return
-	#show_credits_one()
-#
-	#await delay(14)
-	#if cancel_requested: return
-	#show_credits_two()
-#
-	#await delay(14)
-	#if cancel_requested: return
-	#fade_in_orb_logo()
-#
-	#await delay(4)
-	#if cancel_requested: return
-	## Última ação (caso exista)
-#
-#func cancel_sequence():
-	#cancel_requested = true
-#
-#func delay(seconds: float):
-	#await get_tree().create_timer(seconds).timeout
+	await delay(6)
+	if cancel_requested: return
+	show_credits_one()
+
+	await delay(14)
+	if cancel_requested: return
+	show_credits_two()
+
+	await delay(14)
+	if cancel_requested: return
+	fade_in_orb_logo()
+
+	await delay(4)
+	if cancel_requested: return
+	# Última ação (caso exista)
+
+func cancel_sequence():
+	cancel_requested = true
+
+func delay(seconds: float):
+	await get_tree().create_timer(seconds).timeout
