@@ -153,7 +153,7 @@ var special_positions := []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#new_game()
+	#new_game()#
 	closed_board.visible = true
 	$HUD.get_node("StartButton").pressed.connect(new_game)
 	
