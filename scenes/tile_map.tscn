@@ -87,7 +87,7 @@ script = ExtResource("7_ck7q3")
 
 [node name="SpriteLogo" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(512, 859)
+position = Vector2(529, 870)
 texture = ExtResource("7_4tr54")
 
 [node name="SpriteLogo2" type="Sprite2D" parent="."]

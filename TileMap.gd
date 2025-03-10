@@ -846,7 +846,8 @@ func advance_stage():
 	updateHudLabels()
 	check_stage_conditions()
 	
-	if stage >= 15:
+	if stage >= 16:
+		$HUD.get_node("StageLabel").text = "Stage: " + str("15")
 		set_music_fade_out()
 		game_running = false
 		clear_panel()
@@ -1146,7 +1147,7 @@ func start_sequence():
 
 	await delay(4)
 	if cancel_requested: return
-	# Última ação (caso exista)
+	show_esc_to_return()
 
 func cancel_sequence():
 	cancel_requested = true
