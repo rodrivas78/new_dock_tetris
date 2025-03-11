@@ -14,9 +14,9 @@ var t_270 := [Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(1, 2)]
 var t := [t_0, t_90, t_180, t_270]
 
 var o_0 := [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]
-var o_90 := [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]
-var o_180 := [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]
-var o_270 := [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]
+var o_90 := [Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 0)]
+var o_180 := [Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 0), Vector2i(1, 0)]
+var o_270 := [Vector2i(1, 1), Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)]
 var o := [o_0, o_90, o_180, o_270]
 
 var z_0 := [Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)]
@@ -44,7 +44,7 @@ var j_270 := [Vector2i(1, 0), Vector2i(1, 1), Vector2i(0, 2), Vector2i(1, 2)]
 var j := [j_0, j_90, j_180, j_270]
 
 #var shapes := [i, t, o, z, s, l, j]
-var shapes := [j, t, z, s, l, i]
+var shapes := [j, t, z, s, l, i, o]
 var shapes_full := shapes.duplicate()
 
 # Lados possíveis para o surgimento das peças
@@ -109,6 +109,7 @@ var is_paused : bool = true
 var auto_step = 0 
 var end_of_the_game : bool = false
 var cancel_requested : bool = false
+var first_piece_spawned : bool = false 
 
 #tilemap variables
 var tile_id : int = 0
@@ -216,11 +217,27 @@ func new_game():
 
 # Adiciona uma peça fixa no centro do tabuleiro no início do jogo
 func create_fixed_center_piece():
-	#var center_pos = Vector2i(COLS / 2, ROWS / 2)
+	##var center_pos = Vector2i(COLS / 2, ROWS / 2)
 	var center_pos = Vector2i(15, 14)
-	var center_piece = o[0] # Usando o formato "O" como exemplo
-	for i in center_piece:
-		set_cell(board_layer, center_pos + i, tile_id, Vector2i(7,0))
+	var selected_piece = []  # Inicializa como lista vazia
+	# Se for a primeira chamada, usa a peça "O"
+	if not first_piece_spawned:
+		selected_piece = o[0]  # Usa a peça "O" sem rotação
+		first_piece_spawned = true  # Marca que a primeira peça já foi gerada
+	else:
+		# Usa o método `pick_piece()` para garantir que sempre haja peças disponíveis
+		var random_shape = pick_piece()
+		# Verifica se a peça sorteada tem rotações disponíveis
+		if random_shape.size() > 0:
+			selected_piece = random_shape[randi() % random_shape.size()]
+		else:
+			print("Erro: A peça sorteada não tem rotações!")
+	# Se selected_piece estiver vazia, usa a peça "O" como fallback
+	if selected_piece.size() == 0:
+		selected_piece = o[0]
+	# Posiciona a peça escolhida no tabuleiro
+	for i in selected_piece:
+		set_cell(board_layer, center_pos + i, tile_id, Vector2i(7, 0))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -315,7 +332,36 @@ func clear_piece():
 func draw_piece(piece, pos, atlas):
 	for i in piece:
 	#criar aqui condicionais para troca de cor dos tiles de acordo com a peça
-		if piece == j_0:
+		if piece == o_0:
+			if i == Vector2i(0,0) or i == Vector2i(1,1): 
+				atlas = Vector2i(3,0)  # Cor 1
+				set_cell(active_layer, pos + i, tile_id, atlas)
+			else:  
+				atlas = Vector2i(0,0)  # Cor 2
+				set_cell(active_layer, pos + i, tile_id, atlas)
+		elif piece == o_90:
+			if i == Vector2i(1,0) or i == Vector2i(0,1):  
+				atlas = Vector2i(3,0)  # Cor 1 (girado)
+				set_cell(active_layer, pos + i, tile_id, atlas)
+			else:  
+				atlas = Vector2i(0,0)  # Cor 2
+				set_cell(active_layer, pos + i, tile_id, atlas)
+		elif piece == o_180:
+			if i == Vector2i(1,1) or i == Vector2i(0,0):  
+				atlas = Vector2i(3,0)  # Cor 1 (girado novamente)
+				set_cell(active_layer, pos + i, tile_id, atlas)
+			else:  
+				atlas = Vector2i(0,0)  # Cor 2
+				set_cell(active_layer, pos + i, tile_id, atlas)
+		elif piece == o_270:
+			if i == Vector2i(0,1) or i == Vector2i(1,0):  
+				atlas = Vector2i(3,0)  # Cor 1 (última rotação)
+				set_cell(active_layer, pos + i, tile_id, atlas)
+			else:  
+				atlas = Vector2i(0,0)  # Cor 2
+				set_cell(active_layer, pos + i, tile_id, atlas)
+				
+		elif piece == j_0:
 			if i == Vector2i(0,0) or i == Vector2i(2,1): 
 				atlas = Vector2i(3,0)
 				set_cell(active_layer, pos + i, tile_id, atlas)
