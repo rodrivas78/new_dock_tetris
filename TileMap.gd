@@ -607,7 +607,40 @@ func land_piece():
 	# Remove cada segmento da camada ativa e move para a camada do tabuleiro
 	for i in active_piece:
 		erase_cell(active_layer, cur_pos + i)
-		if active_piece == j_0:
+		if active_piece == o_0:
+			if i == Vector2i(0,0) or i == Vector2i(1,1):
+				piece_atlas = Vector2i(3,0)  # Cor 1
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+				special_positions.append(cur_pos + i)
+			else:
+				piece_atlas = Vector2i(0,0)  # Cor 2
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+
+		elif active_piece == o_90:
+			if i == Vector2i(1,0) or i == Vector2i(0,1):
+				piece_atlas = Vector2i(3,0)  # Cor 1 (girado)
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+				special_positions.append(cur_pos + i)
+			else:
+				piece_atlas = Vector2i(0,0)  # Cor 2
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+		elif active_piece == o_180:
+			if i == Vector2i(1,1) or i == Vector2i(0,0):
+				piece_atlas = Vector2i(3,0)  # Cor 1 (girado novamente)
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+				special_positions.append(cur_pos + i)
+			else:
+				piece_atlas = Vector2i(0,0)  # Cor 2
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+		elif active_piece == o_270:
+			if i == Vector2i(0,1) or i == Vector2i(1,0):
+				piece_atlas = Vector2i(3,0)  # Cor 1 (última rotação)
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+				special_positions.append(cur_pos + i)
+			else:
+				piece_atlas = Vector2i(0,0)  # Cor 2
+				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
+		elif active_piece == j_0:
 			if i == Vector2i(0,0) or i == Vector2i(2,1): 
 				piece_atlas = Vector2i(3,0)
 				set_cell(board_layer, cur_pos + i, tile_id, piece_atlas)
