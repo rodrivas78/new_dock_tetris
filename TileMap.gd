@@ -123,7 +123,7 @@ var active_layer : int = 1
 #store special positions
 var special_positions := []
 
-@onready var tween = $Tween
+#@onready var tween = $Tween
 
 @onready var start_button = $HUD.get_node("StartButton")
 @onready var panel_red_node = $HUD.get_node("RedTilesPanel")
