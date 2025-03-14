@@ -71,7 +71,7 @@ texture = ExtResource("5_u4xdp")
 
 [node name="SpriteTitle" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(505, 286)
+position = Vector2(508, 286)
 texture = ExtResource("5_dvs50")
 
 [node name="SpriteYouWon" type="Sprite2D" parent="."]
@@ -149,7 +149,6 @@ autoplay = true
 
 [node name="GameWinMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("20_ekctx")
-volume_db = -0.937
 
 [node name="GameWinSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("23_mi8wk")
