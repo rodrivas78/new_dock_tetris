@@ -123,7 +123,7 @@ var active_layer : int = 1
 #store special positions
 var special_positions := []
 
-@onready var tween = $Tween
+#@onready var tween = $Tween
 
 @onready var start_button = $HUD.get_node("StartButton")
 @onready var panel_red_node = $HUD.get_node("RedTilesPanel")
@@ -931,7 +931,7 @@ func advance_stage():
 		game_running = false
 		clear_panel()
 		end_of_the_game = true 
-		await get_tree().create_timer(3).timeout
+		await get_tree().create_timer(2).timeout
 		show_victory()
 		gameWinSound.play()
 		await get_tree().create_timer(4).timeout
