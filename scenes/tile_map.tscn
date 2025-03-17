@@ -75,6 +75,7 @@ position = Vector2(508, 286)
 texture = ExtResource("5_dvs50")
 
 [node name="SpriteYouWon" type="Sprite2D" parent="."]
+visible = false
 z_index = -1
 position = Vector2(505, 1016)
 texture = ExtResource("7_x45pm")
@@ -98,11 +99,13 @@ scale = Vector2(0.7, 0.7)
 texture = ExtResource("11_ax5x1")
 
 [node name="SpriteCredits" type="Sprite2D" parent="."]
+visible = false
 z_index = -1
 position = Vector2(512, 1056)
 texture = ExtResource("11_761jr")
 
 [node name="SpriteCredits2" type="Sprite2D" parent="."]
+visible = false
 z_index = -1
 position = Vector2(512, 1107)
 texture = ExtResource("12_qdqdf")
