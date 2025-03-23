@@ -48,7 +48,7 @@ var shapes := [j, t, z, s, l, i, o]
 var shapes_full := shapes.duplicate()
 
 # Lados possíveis para o surgimento das peças
-enum Side { TOP, RIGHT, BOTTOM, LEFT }
+enum Side { TOP, BOTTOM}
 
 # Adicione uma variável para armazenar o lado sorteado
 var spawn_side: int
@@ -60,16 +60,14 @@ var start_positions := {
 	#Side.BOTTOM: Vector2i(COLS / 2, ROWS - 1),
 	#Side.LEFT: Vector2i(0, ROWS / 2)
 	Side.TOP: Vector2i(15, 1),
-	Side.RIGHT: Vector2i(29, 14),
+	#Side.RIGHT: Vector2i(29, 14),
 	Side.BOTTOM: Vector2i(15, 28),
-	Side.LEFT: Vector2i(0, 14)
+	#Side.LEFT: Vector2i(0, 14)
 }
 
 var movement_directions := {
 	Side.TOP: Vector2i(0, 1),     # De cima para baixo
-	Side.RIGHT: Vector2i(-1, 0),  # Da direita para a esquerda
 	Side.BOTTOM: Vector2i(0, -1), # De baixo para cima
-	Side.LEFT: Vector2i(1, 0)     # Da esquerda para a direita
 }
 
 #grid variables
@@ -206,7 +204,7 @@ func new_game():
 	piece_atlas = Vector2i(shapes_full.find(piece_type), 0)
 	next_piece_type = pick_piece()
 	next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
-	spawn_side = randi() % 4
+	spawn_side = randi() % 2
 	create_piece()
 	updateHudLabels()
 	
@@ -562,13 +560,13 @@ func move_piece(dir):
 			dockSound.play()
 			land_piece()
 			$HUD.get_node("PiecesLabel").text = "Pieces: " + str(piece_count)
-			#check_rows()
+			check_rows()
 			piece_type = next_piece_type
 			piece_atlas = next_piece_atlas
 			next_piece_type = pick_piece()
 			next_piece_atlas = Vector2i(shapes_full.find(next_piece_type), 0)
 			clear_panel()
-			spawn_side = randi() % 4
+			spawn_side = randi() % 2
 			create_piece()
 			#check_game_over()
 
@@ -861,7 +859,7 @@ func update_adjacent_tiles():
 			new_atlas = Vector2i(6, 0) #azul
 			blue_tiles += 1
 	
-		set_cell(board_layer, pos, tile_id, new_atlas)
+		#set_cell(board_layer, pos, tile_id, new_atlas)
 			
 	updateHudLabels()
 			
@@ -872,7 +870,7 @@ func update_adjacent_tiles():
 
 # Definição das condições para cada fase
 var stage_conditions = {
-	1: { "total_pieces": 10, "min_blue": 4, "max_red": 3 },
+	1: { "total_pieces": 100, "min_blue": 4, "max_red": 3 },
 	2: { "total_pieces": 10, "min_blue": 6, "max_red": 3 },
 	3: { "total_pieces": 12, "min_blue": 8, "max_red": 2 },
 	4: { "total_pieces": 12, "min_blue": 9, "max_red": 2 },
@@ -1080,15 +1078,31 @@ func toggle_pause():
 	is_paused = not is_paused
 	game_running = is_paused
 			
+#func check_rows():
+	#var row : int = ROWS
+	#while row > 0:
+		#var count = 0
+		#for i in range(COLS):
+			#if not is_free(Vector2i(i + 1, row)):
+				#count += 1
+		##if row is full then erase it
+		#if count == COLS:
+			#shift_rows(row)
+			#score += REWARD
+			#$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
+			#speed += ACCEL
+		#else:
+			#row -= 1
+
 func check_rows():
 	var row : int = ROWS
 	while row > 0:
 		var count = 0
-		for i in range(COLS):
+		for i in range(10, 21):  # Alterado para percorrer apenas de 10 a 20
 			if not is_free(Vector2i(i + 1, row)):
 				count += 1
-		#if row is full then erase it
-		if count == COLS:
+		# Se a linha estiver cheia, apaga ela
+		if count == (20 - 10 + 1):  # Agora a condição de linha cheia considera o novo range
 			shift_rows(row)
 			score += REWARD
 			$HUD.get_node("ScoreLabel").text = "SCORE: " + str(score)
@@ -1103,8 +1117,10 @@ func shift_rows(row):
 			atlas = get_cell_atlas_coords(board_layer, Vector2i(j + 1, i - 1))
 			if atlas == Vector2i(-1, -1):
 				erase_cell(board_layer, Vector2i(j + 1, i))
+				#update_adjacent_tiles()
 			else:
 				set_cell(board_layer, Vector2i(j + 1, i), tile_id, atlas)
+				#update_adjacent_tiles()
 
 func clear_board():
 	for i in range(ROWS):
